@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import './util/global/global.css';
+import './util/global/content-styles.css'
 import App from './App';
 
 import { createStore } from 'redux';
@@ -12,6 +13,8 @@ import * as serviceWorker from './serviceWorker';
 
 import * as firebase from 'firebase/app';
 import "firebase/auth";
+
+import { StylesProvider } from '@material-ui/core/styles';
 
 // --- Setting up Firebase
 const firebaseConfig = {
@@ -35,9 +38,11 @@ const store = createStore(
 
 ReactDOM.render(
   <Provider store={store}>
+    <StylesProvider injectFirst>
       <React.StrictMode>
           <App />
       </React.StrictMode>
+    </StylesProvider>
   </Provider>,
   document.getElementById('root')
 );

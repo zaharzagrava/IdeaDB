@@ -7,6 +7,22 @@ import TextFile from "../TextFile/TextFile";
 function TextFileList() {
   return (
     <div className={styles.text_file_list}> 
+      <br></br>
+      <br></br>
+      <br></br>
+      <br></br>
+      <TextFile />
+      <TextFile />
+      <TextFile />
+      <TextFile />
+      <TextFile />
+      <TextFile />
+      <TextFile />
+      <TextFile />
+      <TextFile />
+      <TextFile />
+      <TextFile />
+      <TextFile />
       <TextFile />
       <TextFile />
       <TextFile />
