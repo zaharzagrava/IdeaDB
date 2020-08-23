@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 
-import Searchbar from "./components/Searchbar/Searchbar";
-import TextFileList from "./components/TextFileList/TextFileList";
+import KnowledgeFilesPage from "./components/KnowledgeFilesPage/KnowledgeFilesPage";
 
 function App() {
 
   return (
     <>
-      <Searchbar />
-      <TextFileList />
+      <KnowledgeFilesPage />
     </>
   );
 }

@@ -1,5 +1,5 @@
 import React from 'react'
-import { TextField, Select, MenuItem, AppBar, Toolbar, InputLabel, FormControl } from '@material-ui/core'
+import { TextField, Select, MenuItem, InputLabel, FormControl } from '@material-ui/core'
 
 import styles from "./Searchbar.module.scss";
 

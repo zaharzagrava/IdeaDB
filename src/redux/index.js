@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 
-import CilentReducer from "./client.js";
+import KnowledgeFileReducer from "./knowledge_file.js";
 
 export default combineReducers({
-  client: CilentReducer
+  knowledge_file: KnowledgeFileReducer
 });

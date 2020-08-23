@@ -1,0 +1,16 @@
+{
+  "name": "getKnowledgeFiles",
+  "version": "0.1.0",
+  "description": "",
+  "dependencies": {
+    "aws-sdk": "^2.738.0",
+    "pg": "^8.3.2"
+  },
+  "main": "getKnowledgeFiles.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Ruslan Plastun",
+  "license": "ISC"
+}
