@@ -18,7 +18,7 @@ function App() {
     const CLIENT_ID = '1016499845571-mo5fch462nd5epk3a43gm7cjgplhv0uj.apps.googleusercontent.com';
     const API_KEY = 'AIzaSyAwila-xBl8Jewi61y7d_q_gpWgYAsWZB4';
     const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
-    const SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly';
+    const SCOPES = 'https://www.googleapis.com/auth/drive';
 
     // Inserting the script into html
     const script = document.createElement('script');
@@ -40,6 +40,14 @@ function App() {
           'scope': SCOPES,
           'discoveryDocs': DISCOVERY_DOCS
         })
+
+        // console.log("Signing Out the client")
+        // try {
+        //   await window.gapi.auth2.getAuthInstance().signOut();
+        // } catch (error) {
+        //   console.log("!Error!")
+        //   console.log(error)
+        // }
         
         const googleAuth = window.gapi.auth2.getAuthInstance();
         googleAuth.isSignedIn.listen(updateSigninStatus);

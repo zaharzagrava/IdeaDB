@@ -6,7 +6,9 @@ function AuthorizePage() {
 
   async function authorizeUser() {
     try {
-      await window.gapi.auth2.getAuthInstance().signIn();
+      await window.gapi.auth2.getAuthInstance().signIn({
+        prompt: 'select_account'
+      });
     } catch (error) {
       console.log("!Error!")
       console.log(error)

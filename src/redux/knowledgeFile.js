@@ -1,6 +1,6 @@
 // Action Types
 export const KnowledgeFileActionTypes = {
-  KNOWLEDGE_FILE_INFO_LOADED: "CLIENT_INFO_LOADED"
+  KNOWLEDGE_FILE_INFO_LOADED: "KNOWLEDGE_FILE_INFO_LOADED"
 }
 
 // Inittial State
@@ -14,8 +14,6 @@ export default function KnowledgeFileReducer(state = InitialState, action) {
 
   switch (action.type) {
     case KnowledgeFileActionTypes.KNOWLEDGE_FILE_INFO_LOADED:
-      console.log("INSIDE")
-
       let allIds = [...state.allIds];
       if(!state.allIds.includes(action.payload.id)){
         allIds.push(action.payload.id)
@@ -32,10 +30,7 @@ export default function KnowledgeFileReducer(state = InitialState, action) {
         allIds: allIds
       }
 
-      console.log(newState);
-
       return newState;
-  
     default:
       return state
   }
@@ -44,7 +39,6 @@ export default function KnowledgeFileReducer(state = InitialState, action) {
 // Action Creators
 export const KnowledgeFileActionCreators = {
   knowledgeFileInfoLoaded: function(knowledgeFile) {
-    console.log("inside action")
     return {
       type: KnowledgeFileActionTypes.KNOWLEDGE_FILE_INFO_LOADED,
       payload: knowledgeFile

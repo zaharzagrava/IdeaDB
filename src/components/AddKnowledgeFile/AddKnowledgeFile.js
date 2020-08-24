@@ -7,7 +7,7 @@ import AddIcon from '@material-ui/icons/Add';
 import { useDispatch } from "react-redux";
 
 import axios from "axios";
-import KnowledgeFileActionCreators from "../../redux/knowledge_file";
+import { KnowledgeFileActionCreators } from "../../redux/knowledgeFile";
 
 function AddKnowledgeFile() {
   const dispatch = useDispatch()

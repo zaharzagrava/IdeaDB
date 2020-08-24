@@ -1,9 +1,11 @@
 import { combineReducers } from 'redux';
 
-import KnowledgeFileReducer from "./knowledge_file.js";
+import KnowledgeFileReducer from "./knowledgeFile";
 import AuthReducer from "./auth";
+import SearchBar from "./SearchBar";
 
 export default combineReducers({
   auth: AuthReducer,
-  knowledge_file: KnowledgeFileReducer
+  knowledgeFile: KnowledgeFileReducer,
+  SearchBar: SearchBar
 });

@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react'
 
-import Searchbar from "../Searchbar/Searchbar";
+import SearchBar from "../SearchBar/SearchBar";
 import KnowledgeFileList from "../KnowledgeFileList/KnowledgeFileList";
 import AddKnowledgeFile from "../AddKnowledgeFile/AddKnowledgeFile";
 
@@ -8,7 +8,7 @@ function KnowledgeFilesPage() {
 
   return (
     <>
-      <Searchbar />
+      <SearchBar />
       <KnowledgeFileList />
       <AddKnowledgeFile />
     </>
