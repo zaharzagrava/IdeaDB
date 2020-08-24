@@ -5,10 +5,7 @@ import { Card } from "@material-ui/core";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import CKEditor from "@ckeditor/ckeditor5-react";
 
-import styles from "./KnowledgeFile.module.scss";
 import './KnowledgeFileContent.css'
-
-import parse from 'html-react-parser'
 
 function KnowledgeFile({knowledge_file}) {
   const [text, setText] = useState('')

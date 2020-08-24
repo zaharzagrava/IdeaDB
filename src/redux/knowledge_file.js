@@ -44,6 +44,7 @@ export default function KnowledgeFileReducer(state = InitialState, action) {
 // Action Creators
 export const KnowledgeFileActionCreators = {
   knowledgeFileInfoLoaded: function(knowledgeFile) {
+    console.log("inside action")
     return {
       type: KnowledgeFileActionTypes.KNOWLEDGE_FILE_INFO_LOADED,
       payload: knowledgeFile
