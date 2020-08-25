@@ -117,31 +117,70 @@ function KnowledgeFileList() {
     
     async function loadKnowledgeFiles() {
 
-      function parseSearchBarText(searchBarText) {
-        return searchBarText;
+      // If scrData is not yet loaded by previous hook - wait
+      if(srcDataFolderId === null) return;
+
+      // Default Search or Custom Search
+      let filesListResponse = null;
+      try {
+        if(searchBarText === undefined) {
+          filesListResponse = await window.gapi.client.drive.files.list({
+            'pageSize': 10,
+            'q': `'${srcDataFolderId}' in parents and
+                  mimeType != 'application/vnd.google-apps.folder'`,
+            'fields': "nextPageToken, files(id, name, parents)",
+            'orderBy': 'modifiedTime desc'
+          })
+
+        } else {
+          filesListResponse = await window.gapi.client.drive.files.list({
+            'pageSize': 10,
+            'q': `fullText contains '${searchBarText}' and
+                  '${srcDataFolderId}' in parents and
+                  mimeType != 'application/vnd.google-apps.folder'`,
+            'fields': "nextPageToken, files(id, name, parents)",
+            'orderBy': 'modifiedTime desc'
+          })
+        }
+      } catch (error_result) {
+        console.log("!Error : loadKnowledgeFiles")
+        console.log(error_result)
       }
 
-      const searchQuery = parseSearchBarText(searchBarText);
+      // Remember nextPageToken
+      setNextPageToken(filesListResponse.result.nextPageToken);
 
-      const response = await window.gapi.client.drive.files.list({
-        'pageSize': 100,
-        'q': `name contains 'alp' and
-              mimeType != 'application/vnd.google-apps.folder'`,
-        'fields': "nextPageToken, files(id, name, parents)",
-        'orderBy': 'modifiedTime desc'
-      })
+      console.log("--- filesListResponse ---")
+      console.log(filesListResponse)
       
-      setNextPageToken(response.result.nextPageToken);
-      
-      for (let i = 0; i < response.result.files.length; i++) {
-        const knowledgeFile = response.result.files[i];
+      // Fill redux state with knowledgeFiles data
+      for (let i = 0; i < filesListResponse.result.files.length; i++) {
+        const knowledgeFile = filesListResponse.result.files[i];
+
+        let response = null;
+        try {
+          response = await window.gapi.client.drive.files.get({
+            fileId: knowledgeFile.id,
+            mimeType: 'text/html',
+            alt: 'media'
+          })
+
+          console.log("--- response ---")
+          console.log(response)
+        } catch (error_response) {
+          console.log("!Error : loadKnowledgeFile")
+          console.log(error_response)
+        }
+        
+        knowledgeFile.fullText = response.body;
         dispatch(KnowledgeFileActionCreators.knowledgeFileInfoLoaded(knowledgeFile));
       }
+
     }
 
     loadKnowledgeFiles();
 
-  }, [searchBarText]);
+  }, [searchBarText, srcDataFolderId]);
 
   return (
     <div className={styles.text_file_list}> 
@@ -149,11 +188,15 @@ function KnowledgeFileList() {
       <br></br>
       <br></br>
       <br></br>
-      {/* {knowledge_files_ids.map((knowledge_files_id, index) => {
+      {knowledgeFilesIds.map((knowledgeFilesId, index) => {
         return (
-          <KnowledgeFile knowledge_file={knowledge_files[knowledge_files_id]} />
+          <KnowledgeFile  key={index}
+                          knowledgeBaseFolderId={knowledgeBaseFolderId}
+                          srcDataFolderId={srcDataFolderId}
+                          knowledgeFile={knowledgeFiles[knowledgeFilesId]} />
         );
-      })} */}
+      })}
+
     </div>
   )
 }
