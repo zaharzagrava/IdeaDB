@@ -1,41 +1,70 @@
 import React, { useEffect, useState } from 'react'
 import styles from "./KnowledgeFileList.module.scss";
 
-import KnowledgeFile from "../KnowledgeFile/KnowledgeFile";
-
 import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
+import { Button } from "@material-ui/core";
 
 import { KnowledgeFileActionCreators } from "../../redux/knowledgeFile";
-
-import axios from "axios";
+import KnowledgeFile from "../KnowledgeFile/KnowledgeFile";
 
 function KnowledgeFileList() {
   const dispatch = useDispatch()
 
-  const searchBarText = useSelector(state => state.SearchBar.searchBarText)
+  console.log("@KnowledgeFileList")
   const knowledgeFiles = useSelector(state => state.knowledgeFile.byIds)
   const knowledgeFilesIds = useSelector(state => state.knowledgeFile.allIds)
+
+  async function createKnowledgeFile() {
+    // Clear previous files from redux
+    dispatch(KnowledgeFileActionCreators.knowledgeFilesReloaded());
+
+    const response = await axios({
+      method: 'POST',
+      url: 'https://o3eutj9zwe.execute-api.us-east-1.amazonaws.com/default/knowledgefiles',
+      data: {
+        "HTMLText": "",
+        "plainText": "",
+        "properties": {}
+      }
+    });
+
+    console.log("@response")
+    console.log(response)
+
+    // Save data to redux
+    for (let i = 0; i < response.data.length; i++) {
+      const knowledgeFile = response.data[i];
+      dispatch(KnowledgeFileActionCreators.knowledgeFileInfoLoaded(knowledgeFile))
+    }
+  }
 
   useEffect(() => {
     
     async function loadKnowledgeFiles() {
-      // Default Search or Custom Search
-      const response = await axios({
-        method: 'GET',
-        url: 'https://o3eutj9zwe.execute-api.us-east-1.amazonaws.com/default/getKnowledgeFiles',
-        params: {
-          searchBarText: searchBarText,
-          tagsList: [{
-            tag_type: 'identifier',
-            tag_name: 'system'
-          }]
-        }
-      });
+      console.log("@loadKnowledgeFiles")
 
-      for (let i = 0; i < response.data.result.length; i++) {
-        const knowledgeFile = response.data.result[i];
-        dispatch(KnowledgeFileActionCreators.knowledgeFileInfoLoaded(knowledgeFile))
+      let response = null;
+      try {
+        // Default Search
+        response = await axios({
+          method: 'GET',
+          url: 'https://o3eutj9zwe.execute-api.us-east-1.amazonaws.com/default/knowledgefiles'
+        });
+
+        console.log("@response")
+        console.log(response)
+
+        // Save data to redux
+        for (let i = 0; i < response.data.length; i++) {
+          const knowledgeFile = response.data[i];
+          dispatch(KnowledgeFileActionCreators.knowledgeFileInfoLoaded(knowledgeFile))
+        }
+      } catch (error) {
+        console.log("@error")
+        console.log(error)
       }
+
     }
 
     loadKnowledgeFiles(KnowledgeFileActionCreators.knowledgeFileInfoLoaded());
@@ -48,6 +77,7 @@ function KnowledgeFileList() {
       <br></br>
       <br></br>
       <br></br>
+      <Button onClick={createKnowledgeFile}>Create</Button>
       {knowledgeFilesIds.map((knowledgeFilesId, index) => {
         return (
           <KnowledgeFile  key={index}
