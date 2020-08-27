@@ -39,9 +39,7 @@ const store = createStore(
 ReactDOM.render(
   <Provider store={store}>
     <StylesProvider injectFirst>
-      <React.StrictMode>
           <App />
-      </React.StrictMode>
     </StylesProvider>
   </Provider>,
   document.getElementById('root')
