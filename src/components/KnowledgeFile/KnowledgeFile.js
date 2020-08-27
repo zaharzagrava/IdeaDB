@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import './KnowledgeFileContent.css'
 
 import { useSelector, useDispatch } from "react-redux";
 import { Card, Typography, Button } from "@material-ui/core";
 import { v4 as uuidv4 } from 'uuid';
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import CKEditor from '@ckeditor/ckeditor5-react';
+import './KnowledgeFileContent.css' // has to be after CKEditor import
 import viewToPlainText from '@ckeditor/ckeditor5-clipboard/src/utils/viewtoplaintext';
 import jsxToString from 'jsx-to-string';
 import axios from 'axios';
