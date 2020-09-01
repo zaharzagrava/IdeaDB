@@ -1,0 +1,29 @@
+﻿schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Client {
+  fullName: String!
+  id: ID!
+}
+
+type KnowledgeFile {
+  dateTimeCreated: AWSDateTime!
+  htmlText: String!
+  id: ID!
+  lastDateTimeModified: AWSDateTime!
+  plainText: String!
+  properties: AWSJSON!
+}
+
+type Mutation {
+  deleteKnowledgeFile(id: ID!): KnowledgeFile
+  postKnowledgeFile(htmlText: String, id: ID!, plainText: String, properties: AWSJSON): KnowledgeFile
+  putKnowledgeFile(htmlText: String, id: ID!, plainText: String, properties: AWSJSON): KnowledgeFile
+}
+
+type Query {
+  #  Get a single value of type 'Post' by primary key.
+  getKnowledgeFile(id: ID!): KnowledgeFile
+}

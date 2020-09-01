@@ -19,7 +19,7 @@ function convertHTMLToPlainText(HTMLText) {
 }
 
 function KnowledgeFile( {knowledgeFile} ) {
-
+  
   const dispatch = useDispatch()
 
   async function saveData(knowledgeFileHTML) {
