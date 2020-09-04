@@ -16,6 +16,14 @@ import "firebase/auth";
 
 import { StylesProvider } from '@material-ui/core/styles';
 
+// --- Loading AppSync
+// import AWSAppSyncClient from "aws-appsync";
+// import { ApolloProvider } from "react-apollo";
+// import { Rehydrated } from "aws-appsync-react";
+// import appSyncConfiguration from "./appsyncconfiguration.json";
+import Amplify, { API, graphqlOperation } from 'aws-amplify';
+import awsconfig from './aws-exports';
+
 // --- Setting up Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyDRzS7x4Y1pOHEe-nfR_J0HDUudLGwlR_E",
@@ -36,12 +44,27 @@ const store = createStore(
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
 
+// // --- Setting up AppSync
+// const appSyncClient = new AWSAppSyncClient({
+//   url: appSyncConfiguration.AppSync.Default.ApiUrl,
+//   region: appSyncConfiguration.AppSync.Default.Region,
+//   auth: {
+//     type: appSyncConfiguration.AppSync.Default.AuthMode,
+//     apiKey: appSyncConfiguration.AppSync.Default.ApiKey
+//   }
+// })
+Amplify.configure(awsconfig);
+
 ReactDOM.render(
-  <Provider store={store}>
-    <StylesProvider injectFirst>
+  // <ApolloProvider client={appSyncClient}>
+  //   <Rehydrated>
+      <Provider store={store}>
+        <StylesProvider injectFirst>
           <App />
-    </StylesProvider>
-  </Provider>,
+        </StylesProvider>
+      </Provider>,
+  //   </Rehydrated>
+  // </ApolloProvider>,
   document.getElementById('root')
 );
 

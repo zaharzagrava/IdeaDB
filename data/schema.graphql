@@ -19,11 +19,22 @@ type KnowledgeFile {
 
 type Mutation {
   deleteKnowledgeFile(id: ID!): KnowledgeFile
-  postKnowledgeFile(htmlText: String, id: ID!, plainText: String, properties: AWSJSON): KnowledgeFile
+  postKnowledgeFile(htmlText: String, plainText: String, properties: AWSJSON): KnowledgeFile
   putKnowledgeFile(htmlText: String, id: ID!, plainText: String, properties: AWSJSON): KnowledgeFile
 }
 
 type Query {
   #  Get a single value of type 'Post' by primary key.
   getKnowledgeFile(id: ID!): KnowledgeFile
+  getKnowledgeFiles(limit: Int, offset: Int, orderByDirections: [Directions!]!, orderByFields: [KnowledgeFileFields!]!): [KnowledgeFile]
+}
+
+enum Directions {
+  ASC
+  DESC
+}
+
+enum KnowledgeFileFields {
+  DATE_TIME_CREATED
+  LAST_DATE_TIME_MODIFIED
 }

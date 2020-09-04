@@ -8,9 +8,12 @@ import CKEditor from '@ckeditor/ckeditor5-react';
 import './KnowledgeFileContent.css' // has to be after CKEditor import
 import viewToPlainText from '@ckeditor/ckeditor5-clipboard/src/utils/viewtoplaintext';
 import jsxToString from 'jsx-to-string';
+import { API, graphqlOperation } from 'aws-amplify';
+import { putKnowledgeFile, deleteKnowledgeFile } from "../../graphql/mutations";
 import axios from 'axios';
 
 import { KnowledgeFileActionCreators } from "../../redux/knowledgeFile";
+import KnowledgeFileProperties from "../KnowledgeFileProperties/KnowledgeFileProperties";
 
 function convertHTMLToPlainText(HTMLText) {
   var divContainer= document.createElement("div");
@@ -19,44 +22,43 @@ function convertHTMLToPlainText(HTMLText) {
 }
 
 function KnowledgeFile( {knowledgeFile} ) {
-  
+  const duringEditingIntervalDuration = 5000;
+  let duringEditingIntervalId = null;
+  const afterEditingTimeoutDuration = 3000;
+  let afterEditingTimeoutId = null;
+
   const dispatch = useDispatch()
 
-  async function saveData(knowledgeFileHTML) {
-    const response = await axios({
-      method: 'PUT',
-      url: 'https://o3eutj9zwe.execute-api.us-east-1.amazonaws.com/default/knowledgefiles',
-      params: {
-        "knowledgeFileId": knowledgeFile.id
-      },
-      data: {
-        "HTMLText": knowledgeFileHTML,
-        "plainText": convertHTMLToPlainText(knowledgeFileHTML)
-      }
-    });
+  async function putKF(knowledgeFileHTML) {
+    console.log("@putKnowledgeFile")
 
-    console.log("@response")
-    console.log(response)
+    try {
+      const response = await API.graphql(graphqlOperation(putKnowledgeFile, {
+        id: knowledgeFile.id,
+        htmlText: knowledgeFileHTML,
+        plainText: convertHTMLToPlainText(knowledgeFileHTML)
+      }));
 
+      console.log("@response")
+      console.log(response)
+    } catch (error) {
+      console.log("@error")
+      console.log(error)
+    }
   }
 
-  async function deleteKnowledgeFile() {
+  async function deleteKF() {
     console.log("@deleteKnowledgeFile")
 
     try {
-      const response = await axios({
-        method: 'DELETE',
-        url: 'https://o3eutj9zwe.execute-api.us-east-1.amazonaws.com/default/knowledgefiles',
-        params: {
-          "knowledgeFileId": knowledgeFile.id
-        }
-      });
+      const response = await API.graphql(graphqlOperation(deleteKnowledgeFile, {
+        id: knowledgeFile.id,
+      }));
 
       console.log("@response")
       console.log(response)
 
       dispatch(KnowledgeFileActionCreators.knowledgeFileInfoDeleted(knowledgeFile));
-
     } catch (error) {
       console.log("@error")
       console.log(error)
@@ -66,15 +68,36 @@ function KnowledgeFile( {knowledgeFile} ) {
 
   return (
     <Card>
-      <Button onClick={deleteKnowledgeFile}>Delete</Button>
+      <Button onClick={deleteKF}>Delete</Button>
+      <KnowledgeFileProperties knowledgeFile={knowledgeFile}/>
       <div className="editor">
         <CKEditor
           editor={ClassicEditor}
-          data={knowledgeFile.plain_text}
+          data={knowledgeFile.htmlText}
           onChange={(event, editor) => {
-            console.log("@onChange")
-            console.log(editor.getData())
-            saveData(editor.getData());
+            console.log("@onChange main")
+            // console.log(editor.getData())
+            // console.log(knowledgeFile.id)
+            
+            // Start duringEditing saveData if it's not already started
+            if(duringEditingIntervalId === null) {
+              duringEditingIntervalId = setInterval(() => {
+                putKF(editor.getData());
+              }, duringEditingIntervalDuration);
+            }
+
+            // Restart afterEditing saveData
+            if(afterEditingTimeoutId !== null) {
+              clearTimeout(afterEditingTimeoutId)
+              afterEditingTimeoutId = null;
+            }
+
+            afterEditingTimeoutId = setTimeout(() => {
+              putKF(editor.getData());
+
+              clearInterval(duringEditingIntervalId)
+              duringEditingIntervalId = null;
+            }, afterEditingTimeoutDuration);
           }}
           />
       </div>

@@ -1,105 +1,114 @@
-const { Client } = require('pg');  //  Needs the layer0 Lambda Layer
+const { Client } = require('pg'); //  Needs the layer0 Lambda Layer
+const knex = require('knex');     //  Needs the layer0 Lambda Layer
 
 exports.handler = async (event, context, callback) => {
-  const client = new Client();
-  await client.connect();
-  
-  console.log(`-------------------------------`)
+  console.log('@start of knowledgeBaseResolver');
+  console.log('@event');
   console.log(event)
-  
-  const queryStringParameters = event['queryStringParameters'];
-  
-  let query = `select *
-from knowledge_file`;
-  let values = [];
-  
-  if(queryStringParameters !== null) {
-    if(queryStringParameters['properties'] !== undefined) {
-      console.log('@properties')
-      query += `
-where (knowledge_file.properties @> $1::jsonb)`
-      values.push(queryStringParameters['properties'])
-    }
-    
-    if(queryStringParameters['searchBarText'] !== undefined) {
-      console.log('@searchBarText')
-      query += `
-and (knowledge_file.plain_text LIKE $2)`
-      values.push('%' + queryStringParameters['searchBarText'] +'%')
-    }
-  }
-  
-  console.log('@query');
-  console.log(query);
-  console.log(`-------------------------------`)
-  
-  let res = null;
-  try {
-    res = await client.query(query, values);
-  } catch(error) {
-    console.log("@client.query");
-    console.log(error);
-  }
 
-  console.log('@res.rows');
-  console.log(res.rows);
+  console.log('@connectToPostgreSQL with knex');
+  const knexConnection = knex({
+    client: 'pg',
+    connection: {
+      host: process.env.PGHOST,
+      user : process.env.PGUSER,
+      password : process.env.PGPASSWORD,
+      database : process.env.PGDATABASE	
+    }
+  });
   
-  try {
-    await client.end();
-  } catch(error) {
-    console.log("@client.end");
-    console.log(error);
+  let data = null;
+  let response = {};
+  
+  const underscoredSelectionSetList = [];
+  event.info.selectionSetList.map((field) => {
+    underscoredSelectionSetList.push(decamelize(field));
+    return null;
+  })
+  
+  console.log('@underscoredSelectionSetList')
+  console.log(underscoredSelectionSetList)
+  
+  const underscoredArguments = {};
+  for (var argumentName in event.arguments) {
+    if (event.arguments.hasOwnProperty(argumentName)) {
+      const argumentValue = event.arguments[argumentName];
+      underscoredArguments[decamelize(argumentName)] = argumentValue;
+    }
   }
   
-  const response = {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Headers": 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
-        "Access-Control-Allow-Origin": '*',
-        "Access-Control-Allow-Credentials": 'true',
-        "Access-Control-Allow-Methods": 'DELETE,GET,OPTIONS,POST,PUT'
-      },
-      body: JSON.stringify(res.rows)
-  };
+  console.log('@underscoredArguments')
+  console.log(underscoredArguments)
   
-  console.log(response)
+  switch (event.info.fieldName) {
+    case "getKnowledgeFile":
+      console.log('@getKnowledgeFile field');
+      
+      data = await knexConnection('knowledge_file')
+                    .select(underscoredSelectionSetList)
+                    .where('id', event.arguments.id);
+                    
+      data = data[0];
+      
+      console.log('@data');
+      console.log(data);
+      
+      event.info.selectionSetList.map((field, index) => {
+        response[field] = data[underscoredSelectionSetList[index]];
+        return null;
+      });
+      
+      console.log('@response');
+      console.log(response);
+      
+      callback(null, response)
+      break;
+      
+    case "postKnowledgeFile":
+      console.log('@postKnowledgeFile field');
+      
+      data = await knexConnection('knowledge_file')
+                    .insert(underscoredArguments, underscoredSelectionSetList);
+      
+      console.log('@data');
+      console.log(data);
+      
+      event.info.selectionSetList.map((field, index) => {
+        response[field] = data[underscoredSelectionSetList[index]];
+      });
+      
+      console.log('@response');
+      console.log(response);
+      
+      callback(null, response)
+      break;
   
-  return response;
+    default:
+      callback(`There is no functionality to process this field: ${event.info.fieldName}`);
+      break;
+  }
+  
+  console.log('@disonnecting from PostgreSQL');
+  knexConnection.destroy()
+    .then((res) => {
+      console.log("@successfuly disconnected");
+      console.log(res);
+    })
+    .catch((error) => {
+      console.error("@unsuccessfuly disconnected");
+      console.log(error);
+    })
 };
 
+function camelize(str) {
+  var arr = str.split(/[_-]/);
+  var newStr = "";
+  for (var i = 1; i < arr.length; i++) {
+      newStr += arr[i].charAt(0).toUpperCase() + arr[i].slice(1);
+  }
+  return arr[0] + newStr;
+}
 
-
-///////////////////////////////////////////////////////
-
-// async function connectToPostgreSQL() {
-//   let client = null;
-
-//   try {
-//     client = new Client();
-//     await client.connect();
-//   } catch(error) {
-//     console.log("@connectToPostgreSQL");
-//     console.log(error);
-//   }
-
-
-//   return client;
-// }
-
-// async function disconnectFromPostgreSQL(client) {
-//   const client = new Client();
-//   await client.connect();
-// }
-
-// async function sendQueryToPostgreSQL(client, query, values) {
-//   let response = null;
-
-//   try {
-//     response = await client.query(query, values);
-//   } catch(error) {
-//     console.log("@client.query");
-//     console.log(error);
-//   }
-
-//   return response;
-// }
+function decamelize(str) {
+  return str.replace(/\.?([A-Z]+)/g, function (x,y){return "_" + y.toLowerCase()}).replace(/^_/, "");
+}

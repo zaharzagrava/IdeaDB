@@ -6,6 +6,9 @@ import { TextField, Drawer, Button, List, ListItem, ListItemIcon, ListItemText, 
 import { v4 as uuidv4 } from 'uuid';
 import * as Yup from "yup";
 import axios from "axios";
+import { API, graphqlOperation } from 'aws-amplify';
+import { postKnowledgeFile } from "../../graphql/mutations";
+import { getKnowledgeFiles1 } from "../../graphql/myqueries";
 
 import { SearchBarActionCreators as ACs } from "../../redux/SearchBar";
 import { Formik, Form } from 'formik';
@@ -43,20 +46,31 @@ function Searchbar() {
     setDrawerOpened(open);
   };
 
+  async function createKnowledgeFile() {
+    // Clear previous files from redux
+    dispatch(KnowledgeFileActionCreators.knowledgeFilesReloaded());
+
+    const response = await API.graphql(graphqlOperation(postKnowledgeFile));
+
+    console.log("@response")
+    console.log(response)
+
+    // Save data to redux
+    const knowledgeFile = response.data.postKnowledgeFile;
+    dispatch(KnowledgeFileActionCreators.knowledgeFileInfoLoaded(knowledgeFile))
+  }
+
   async function loadKnowledgeFiles(values) {
-    console.log("@values")
-    console.log(values)
+    console.log("@loadKnowledgeFiles")
+    
     // Custom Search
-    const response = await axios({
-      method: 'GET',
-      url: 'https://o3eutj9zwe.execute-api.us-east-1.amazonaws.com/default/knowledgefiles',
-      params: {
-        "searchBarText": values.fileContent,
-        "properties": {
-          "identifier":[]
-        }
-      }
-    });
+    const response = await API.graphql(graphqlOperation(getKnowledgeFiles1, {
+      plainText: values.fileContent,
+      orderByFields: ["LAST_DATE_TIME_MODIFIED", "DATE_TIME_CREATED"],
+      orderByDirections: ["DESC", "DESC"],
+      limit: 10,
+      offset: 0
+    }));
 
     console.log("@response")
     console.log(response)
@@ -65,13 +79,13 @@ function Searchbar() {
     dispatch(KnowledgeFileActionCreators.knowledgeFilesReloaded());
 
     // Save data to redux
-    for (let i = 0; i < response.data.length; i++) {
-      const knowledgeFile = response.data[i];
+    for (let i = 0; i < response.data.getKnowledgeFiles.length; i++) {
+      const knowledgeFile = response.data.getKnowledgeFiles[i];
       dispatch(KnowledgeFileActionCreators.knowledgeFileInfoLoaded(knowledgeFile))
     }
 
     // Close the drawer
-    console.log("@before toggleDrawer")
+    console.log("@setDrawerOpened")
     setDrawerOpened(false);
   }
 
@@ -90,7 +104,7 @@ function Searchbar() {
       <Button onClick={toggleDrawer(true)}>Search</Button>
       <Button>Properties</Button>
       <Button>Settings</Button>
-      <Button>Add</Button>
+      <Button onClick={createKnowledgeFile}>Create</Button>
 
       <Drawer
         anchor='left'

@@ -42,17 +42,30 @@ export default function KnowledgeFileReducer(state = InitialState, action) {
     case KnowledgeFileActionTypes.KNOWLEDGE_FILE_INFO_DELETED:
       console.log("@KNOWLEDGE_FILE_INFO_DELETED")
 
-      delete state.byIds[action.payload.id];
-      const index = state.allIds.indexOf(action.payload.id);
-      if (index > -1) {
-        state.allIds.splice(index, 1);
+      newState = {
+        byIds: {},
+        allIds: []
       }
 
-      newState = {
-        byIds: {
-          ...state.byIds
-        },
-        allIds: [ ...state.allIds ]
+      for (let i = 0; i < state.allIds.length; i++) {
+        const knowledgeFileId = state.allIds[i];
+        const knowledgeFile = state.byIds[knowledgeFileId];
+
+        if(knowledgeFileId !== action.payload.id) {
+          const newKnowledgeFile = {
+            ...knowledgeFile,
+            properties: {}
+          };
+
+          for(let key in knowledgeFile.properties) {
+            const propertyList = knowledgeFile.properties[key];
+
+            newKnowledgeFile.properties[key] = [...propertyList];
+          }
+
+          newState.byIds[knowledgeFileId] = newKnowledgeFile;
+          newState.allIds.push(knowledgeFileId);
+        }
       }
       
       return newState;

@@ -4,8 +4,6 @@ import KnowledgeFilesPage from "./components/KnowledgeFilesPage/KnowledgeFilesPa
 
 import { useDispatch } from "react-redux";
 
-import useScript from './hooks/useScript';
-
 import { AuthActionCreators } from "./redux/auth";
 import AuthorizePage from './components/AuthorizePage/AuthorizePage';
 
@@ -40,14 +38,6 @@ function App() {
           'scope': SCOPES,
           'discoveryDocs': DISCOVERY_DOCS
         })
-
-        // console.log("Signing Out the client")
-        // try {
-        //   await window.gapi.auth2.getAuthInstance().signOut();
-        // } catch (error) {
-        //   console.log("!Error!")
-        //   console.log(error)
-        // }
         
         const googleAuth = window.gapi.auth2.getAuthInstance();
         googleAuth.isSignedIn.listen(updateSigninStatus);
@@ -55,7 +45,7 @@ function App() {
 
         dispatch(AuthActionCreators.googleAuthInfoLoaded(googleAuth));
       } catch(e) {
-        console.log("!Error!")
+        console.log("@error")
         console.log(e);
       }
     }

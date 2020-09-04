@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-knowledgebase-dev-74035-authRole",
+      "UnauthRoleArn": "arn:aws:iam::813538246246:role/amplify-knowledgebase-dev-74035-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::813538246246:role/amplify-knowledgebase-dev-74035-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-knowledgebase-dev-74035-deployment",
+      "UnauthRoleName": "amplify-knowledgebase-dev-74035-unauthRole",
+      "StackName": "amplify-knowledgebase-dev-74035",
+      "StackId": "arn:aws:cloudformation:us-east-1:813538246246:stack/amplify-knowledgebase-dev-74035/9eaf8f30-ed9f-11ea-b86d-1288d43a03c2",
+      "AmplifyAppId": "do7t1tcbfvanm"
+    }
+  }
+}
