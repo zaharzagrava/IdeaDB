@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { TextField, Drawer, Button, List, ListItem, ListItemIcon, ListItemText, Box, Divider } from '@material-ui/core'
 import { v4 as uuidv4 } from 'uuid';
 import * as Yup from "yup";
-import axios from "axios";
+import JSYAML from "js-yaml";
 import { API, graphqlOperation } from 'aws-amplify';
 import { postKnowledgeFile } from "../../graphql/mutations";
 import { getKnowledgeFiles1 } from "../../graphql/myqueries";
@@ -14,6 +14,7 @@ import { SearchBarActionCreators as ACs } from "../../redux/SearchBar";
 import { Formik, Form } from 'formik';
 import FormTextField from "../FormTextField/FormTextField";
 import { KnowledgeFileActionCreators } from "../../redux/knowledgeFile";
+import CodeField from "../CodeField/CodeField";
 
 const initialValues = {
   fileContent: '',
@@ -24,6 +25,15 @@ const validationSchema = Yup.object({
   fileContent: Yup.string().required('Required'),
   properties: Yup.string()
 });
+
+function convertYAMLStringToJSONObject(YAMLString) {
+  return  JSON.parse( // parse json string to json object
+          JSON.stringify( // parse yaml to json string
+          JSYAML.load( // parse string to yaml
+            YAMLString
+          ), null, 2)
+          )
+}
 
 function Searchbar() {
   console.log("Searchbar render")
@@ -62,15 +72,27 @@ function Searchbar() {
 
   async function loadKnowledgeFiles(values) {
     console.log("@loadKnowledgeFiles")
-    
-    // Custom Search
-    const response = await API.graphql(graphqlOperation(getKnowledgeFiles1, {
-      plainText: values.fileContent,
+
+    const variables = {
       orderByFields: ["LAST_DATE_TIME_MODIFIED", "DATE_TIME_CREATED"],
       orderByDirections: ["DESC", "DESC"],
       limit: 10,
       offset: 0
-    }));
+    };
+
+    if(values.fileContent !== "") {
+      variables.plainText = values.fileContent;
+    }
+
+    if(values.properties !== "") {
+      variables.properties = JSON.stringify(convertYAMLStringToJSONObject(values.properties));
+    }
+
+    console.log("@variables")
+    console.log(variables)
+
+    // Custom Search
+    const response = await API.graphql(graphqlOperation(getKnowledgeFiles1, variables));
 
     console.log("@response")
     console.log(response)
@@ -116,13 +138,15 @@ function Searchbar() {
           <Button onClick={toggleDrawer(false)}>Close</Button>
           <Formik
             initialValues={initialValues}
-            validationSchema={validationSchema}
+            // validationSchema={validationSchema}
             onSubmit={loadKnowledgeFiles}
           >
             <Form>
-              <FormTextField label="File Content" name="fileContent" />
-              <Divider />
               <FormTextField
+                label="File Content"
+                name="fileContent" />
+              <Divider />
+              <CodeField 
                 label={"Properties"}
                 name={"properties"}/>
               <Divider />

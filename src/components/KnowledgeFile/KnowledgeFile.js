@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 import { useSelector, useDispatch } from "react-redux";
-import { Card, Typography, Button } from "@material-ui/core";
+import { Card, Typography, Button, Divider } from "@material-ui/core";
 import { v4 as uuidv4 } from 'uuid';
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import CKEditor from '@ckeditor/ckeditor5-react';
@@ -69,7 +69,9 @@ function KnowledgeFile( {knowledgeFile} ) {
   return (
     <Card>
       <Button onClick={deleteKF}>Delete</Button>
+      <Typography>Properties</Typography>
       <KnowledgeFileProperties knowledgeFile={knowledgeFile}/>
+      <Typography>Main</Typography>
       <div className="editor">
         <CKEditor
           editor={ClassicEditor}
