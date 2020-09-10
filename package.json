@@ -24,7 +24,6 @@
     "formik": "^2.1.5",
     "googleapis": "^59.0.0",
     "graphql-tag": "^2.11.0",
-    "js-yaml": "^3.14.0",
     "jsx-to-string": "^1.4.0",
     "node-sass": "^4.14.1",
     "react": "^16.13.1",

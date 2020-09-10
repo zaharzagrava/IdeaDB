@@ -26,6 +26,7 @@ function KnowledgeFileList() {
       try {
         // Default Search
         const response = await API.graphql(graphqlOperation(getKnowledgeFiles1, {
+          regexList: ["."],
           orderByFields: ["LAST_DATE_TIME_MODIFIED", "DATE_TIME_CREATED"],
           orderByDirections: ["DESC", "DESC"],
           limit: 10,

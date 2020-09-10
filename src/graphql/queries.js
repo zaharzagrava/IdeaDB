@@ -5,9 +5,7 @@ export const getKnowledgeFile = /* GraphQL */ `
   query GetKnowledgeFile($id: ID!) {
     getKnowledgeFile(id: $id) {
       id
-      htmlText
-      plainText
-      properties
+      srcText
       lastDateTimeModified
       dateTimeCreated
     }
@@ -15,25 +13,21 @@ export const getKnowledgeFile = /* GraphQL */ `
 `;
 export const getKnowledgeFiles = /* GraphQL */ `
   query GetKnowledgeFiles(
-    $properties: AWSJSON
-    $plainText: String
+    $regexList: [String!]!
     $orderByFields: [KnowledgeFileFields!]!
     $orderByDirections: [Directions!]!
     $limit: Int
     $offset: Int
   ) {
     getKnowledgeFiles(
-      properties: $properties
-      plainText: $plainText
+      regexList: $regexList
       orderByFields: $orderByFields
       orderByDirections: $orderByDirections
       limit: $limit
       offset: $offset
     ) {
       id
-      htmlText
-      plainText
-      properties
+      srcText
       lastDateTimeModified
       dateTimeCreated
     }

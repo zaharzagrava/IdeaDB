@@ -2,44 +2,24 @@ import React, { useEffect, useState } from 'react'
 import styles from "./SearchBar.module.scss";
 
 import { useDispatch, useSelector } from "react-redux";
-import { TextField, Drawer, Button, List, ListItem, ListItemIcon, ListItemText, Box, Divider } from '@material-ui/core'
+import { Drawer, Button, Box, Divider } from '@material-ui/core'
 import { v4 as uuidv4 } from 'uuid';
 import * as Yup from "yup";
-import JSYAML from "js-yaml";
 import { API, graphqlOperation } from 'aws-amplify';
 import { postKnowledgeFile } from "../../graphql/mutations";
 import { getKnowledgeFiles1 } from "../../graphql/myqueries";
 
 import { SearchBarActionCreators as ACs } from "../../redux/SearchBar";
 import { Formik, Form } from 'formik';
-import FormTextField from "../FormTextField/FormTextField";
 import { KnowledgeFileActionCreators } from "../../redux/knowledgeFile";
 import CodeField from "../CodeField/CodeField";
 
 const initialValues = {
-  fileContent: '',
-  properties: ''
+  regexList: ''
 };
-
-const validationSchema = Yup.object({
-  fileContent: Yup.string().required('Required'),
-  properties: Yup.string()
-});
-
-function convertYAMLStringToJSONObject(YAMLString) {
-  return  JSON.parse( // parse json string to json object
-          JSON.stringify( // parse yaml to json string
-          JSYAML.load( // parse string to yaml
-            YAMLString
-          ), null, 2)
-          )
-}
 
 function Searchbar() {
   console.log("Searchbar render")
-
-  const propertyByIds = useSelector(state => state.property.byIds)
-  const propertyAllIds = useSelector(state => state.property.allIds)
 
   const [seachBarId, setSeachBarId] = useState(uuidv4());
   const [drawerOpened, setDrawerOpened] = useState(false);
@@ -80,12 +60,9 @@ function Searchbar() {
       offset: 0
     };
 
-    if(values.fileContent !== "") {
-      variables.plainText = values.fileContent;
-    }
-
-    if(values.properties !== "") {
-      variables.properties = JSON.stringify(convertYAMLStringToJSONObject(values.properties));
+    variables.regexList = values.regexList.split('\n');
+    for (let i = 0; i < variables.regexList.length; i++) {
+      variables.regexList[i] = `${variables.regexList[i]}`;
     }
 
     console.log("@variables")
@@ -124,7 +101,6 @@ function Searchbar() {
   return (
     <div className={styles.filter}>
       <Button onClick={toggleDrawer(true)}>Search</Button>
-      <Button>Properties</Button>
       <Button>Settings</Button>
       <Button onClick={createKnowledgeFile}>Create</Button>
 
@@ -142,13 +118,9 @@ function Searchbar() {
             onSubmit={loadKnowledgeFiles}
           >
             <Form>
-              <FormTextField
-                label="File Content"
-                name="fileContent" />
-              <Divider />
               <CodeField 
-                label={"Properties"}
-                name={"properties"}/>
+                label={"Regex List"}
+                name={"regexList"}/>
               <Divider />
               <Button type="submit" color="primary">Search</Button>
             </Form>

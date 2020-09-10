@@ -1,42 +1,31 @@
 import React, { useState } from 'react'
 
-import { useSelector, useDispatch } from "react-redux";
-import { Card, Typography, Button, Divider } from "@material-ui/core";
-import { v4 as uuidv4 } from 'uuid';
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import CKEditor from '@ckeditor/ckeditor5-react';
+import { useDispatch } from "react-redux";
+import { Card, Button, Divider } from "@material-ui/core";
 import './KnowledgeFileContent.css' // has to be after CKEditor import
-import viewToPlainText from '@ckeditor/ckeditor5-clipboard/src/utils/viewtoplaintext';
-import jsxToString from 'jsx-to-string';
 import { API, graphqlOperation } from 'aws-amplify';
 import { putKnowledgeFile, deleteKnowledgeFile } from "../../graphql/mutations";
-import axios from 'axios';
+import AceEditor from "react-ace";
+import "ace-builds/src-noconflict/mode-yaml";
+import "ace-builds/src-noconflict/theme-github";
 
 import { KnowledgeFileActionCreators } from "../../redux/knowledgeFile";
-import KnowledgeFileProperties from "../KnowledgeFileProperties/KnowledgeFileProperties";
-
-function convertHTMLToPlainText(HTMLText) {
-  var divContainer= document.createElement("div");
-  divContainer.innerHTML = HTMLText;
-  return divContainer.textContent || divContainer.innerText || "";
-}
 
 function KnowledgeFile( {knowledgeFile} ) {
-  const duringEditingIntervalDuration = 5000;
-  let duringEditingIntervalId = null;
+  const duringEditingTimeoutDuration = 5000;
+  let duringEditingTimeoutlId = null;
   const afterEditingTimeoutDuration = 3000;
   let afterEditingTimeoutId = null;
 
   const dispatch = useDispatch()
 
-  async function putKF(knowledgeFileHTML) {
+  async function putKF(srcText) {
     console.log("@putKnowledgeFile")
 
     try {
       const response = await API.graphql(graphqlOperation(putKnowledgeFile, {
         id: knowledgeFile.id,
-        htmlText: knowledgeFileHTML,
-        plainText: convertHTMLToPlainText(knowledgeFileHTML)
+        srcText: srcText
       }));
 
       console.log("@response")
@@ -46,7 +35,6 @@ function KnowledgeFile( {knowledgeFile} ) {
       console.log(error)
     }
   }
-
   async function deleteKF() {
     console.log("@deleteKnowledgeFile")
 
@@ -65,44 +53,50 @@ function KnowledgeFile( {knowledgeFile} ) {
     }
 
   }
-
   return (
     <Card>
       <Button onClick={deleteKF}>Delete</Button>
-      <Typography>Properties</Typography>
-      <KnowledgeFileProperties knowledgeFile={knowledgeFile}/>
-      <Typography>Main</Typography>
-      <div className="editor">
-        <CKEditor
-          editor={ClassicEditor}
-          data={knowledgeFile.htmlText}
-          onChange={(event, editor) => {
-            console.log("@onChange main")
-            // console.log(editor.getData())
-            // console.log(knowledgeFile.id)
+      <Divider/>
+      <AceEditor
+          mode="yaml"
+          theme="github"
+          maxLines={Infinity}
+          tabSize={2}
+          showGutter={false}
+          highlightActiveLine={false}
+          defaultValue={knowledgeFile.srcText}
+          // enableBasicAutocompletion={true}
+          // enableLiveAutocompletion={true}
+          width={"100%"}
+          onChange={(newValue) => {
+            console.log("@onChange properties")
+            // console.log(newValue)
+            // putKF(newValue)
             
             // Start duringEditing saveData if it's not already started
-            if(duringEditingIntervalId === null) {
-              duringEditingIntervalId = setInterval(() => {
-                putKF(editor.getData());
-              }, duringEditingIntervalDuration);
+            if(duringEditingTimeoutlId === null) {
+              duringEditingTimeoutlId = setTimeout(() => {
+                putKF(newValue);
+                duringEditingTimeoutlId = null;
+              }, duringEditingTimeoutDuration);
             }
-
+  
             // Restart afterEditing saveData
             if(afterEditingTimeoutId !== null) {
               clearTimeout(afterEditingTimeoutId)
               afterEditingTimeoutId = null;
             }
-
+  
             afterEditingTimeoutId = setTimeout(() => {
-              putKF(editor.getData());
-
-              clearInterval(duringEditingIntervalId)
-              duringEditingIntervalId = null;
+              putKF(newValue);
+  
+              clearTimeout(duringEditingTimeoutlId)
+              duringEditingTimeoutlId = null;
             }, afterEditingTimeoutDuration);
           }}
-          />
-      </div>
+          name="UNIQUE_ID_OF_DIV"
+          editorProps={{ $blockScrolling: true }}
+        />
     </Card>
   )
 }
