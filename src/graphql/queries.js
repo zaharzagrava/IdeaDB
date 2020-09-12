@@ -2,8 +2,8 @@
 // this is an auto generated file. This will be overwritten
 
 export const getKnowledgeFile = /* GraphQL */ `
-  query GetKnowledgeFile($id: ID!) {
-    getKnowledgeFile(id: $id) {
+  query GetKnowledgeFile($id: ID!, $idToken: String) {
+    getKnowledgeFile(id: $id, idToken: $idToken) {
       id
       srcText
       lastDateTimeModified
@@ -18,6 +18,7 @@ export const getKnowledgeFiles = /* GraphQL */ `
     $orderByDirections: [Directions!]!
     $limit: Int
     $offset: Int
+    $idToken: String
   ) {
     getKnowledgeFiles(
       regexList: $regexList
@@ -25,6 +26,7 @@ export const getKnowledgeFiles = /* GraphQL */ `
       orderByDirections: $orderByDirections
       limit: $limit
       offset: $offset
+      idToken: $idToken
     ) {
       id
       srcText

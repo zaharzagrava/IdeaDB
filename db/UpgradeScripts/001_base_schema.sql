@@ -19,7 +19,7 @@ create table knowledge_file (
 create TABLE client_knowledge_file (
   id bigserial primary key,
   client_id bigint not null references client(id),
-  knowledge_file_id bigint not null references knowledge_file(id) unique ON DELETE CASCADE
+  knowledge_file_id bigint not null references knowledge_file(id) ON DELETE CASCADE UNIQUE
 );
 
 -- 

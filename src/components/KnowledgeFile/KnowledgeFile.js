@@ -8,6 +8,7 @@ import { putKnowledgeFile, deleteKnowledgeFile } from "../../graphql/mutations";
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-yaml";
 import "ace-builds/src-noconflict/theme-github";
+import * as firebase from 'firebase/app';
 
 import { KnowledgeFileActionCreators } from "../../redux/knowledgeFile";
 
@@ -22,10 +23,13 @@ function KnowledgeFile( {knowledgeFile} ) {
   async function putKF(srcText) {
     console.log("@putKnowledgeFile")
 
+    const idToken = await firebase.auth().currentUser.getIdToken();
+
     try {
       const response = await API.graphql(graphqlOperation(putKnowledgeFile, {
         id: knowledgeFile.id,
-        srcText: srcText
+        srcText: srcText,
+        idToken: idToken
       }));
 
       console.log("@response")
@@ -38,9 +42,12 @@ function KnowledgeFile( {knowledgeFile} ) {
   async function deleteKF() {
     console.log("@deleteKnowledgeFile")
 
+    const idToken = await firebase.auth().currentUser.getIdToken();
+
     try {
       const response = await API.graphql(graphqlOperation(deleteKnowledgeFile, {
         id: knowledgeFile.id,
+        idToken: idToken
       }));
 
       console.log("@response")

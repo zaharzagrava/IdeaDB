@@ -1,68 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
-import KnowledgeFilesPage from "./components/KnowledgeFilesPage/KnowledgeFilesPage";
-
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import * as firebase from "firebase/app";
 
 import { AuthActionCreators } from "./redux/auth";
 import AuthorizePage from './components/AuthorizePage/AuthorizePage';
+import KnowledgeFilesPage from "./components/KnowledgeFilesPage/KnowledgeFilesPage";
 
 function App() {
+  const loginStatus = useSelector(state => state.auth.loginStatus)
   const dispatch = useDispatch()
-  const [isAuthorized, setIsAuthorized] = useState(false);
 
-  useEffect(() => {
-    // --- Setting up Google API
-    const CLIENT_ID = '1016499845571-mo5fch462nd5epk3a43gm7cjgplhv0uj.apps.googleusercontent.com';
-    const API_KEY = 'AIzaSyAwila-xBl8Jewi61y7d_q_gpWgYAsWZB4';
-    const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
-    const SCOPES = 'https://www.googleapis.com/auth/drive';
-
-    // Inserting the script into html
-    const script = document.createElement('script');
-
-    script.src = 'https://apis.google.com/js/api.js';
-    script.async = true;
-    script.onload = () => {
-      window.gapi.load('client:auth2', initClient);
-    };
-
-    document.body.appendChild(script);
-
-    // Running Authorizatino
-    async function initClient() {
-      try{
-        await window.gapi.client.init({
-          'apiKey': API_KEY,
-          'clientId': CLIENT_ID,
-          'scope': SCOPES,
-          'discoveryDocs': DISCOVERY_DOCS
-        })
-        
-        const googleAuth = window.gapi.auth2.getAuthInstance();
-        googleAuth.isSignedIn.listen(updateSigninStatus);
-        updateSigninStatus(googleAuth.isSignedIn.get())
-
-        dispatch(AuthActionCreators.googleAuthInfoLoaded(googleAuth));
-      } catch(e) {
-        console.log("@error")
-        console.log(e);
-      }
+  firebase.auth().onAuthStateChanged((user) => {
+    // if user isn't null then we logged in
+    if (user) {
+      console.log("@login")
+      dispatch(AuthActionCreators.loggedIn());
+    } else {
+      console.log("@logout")
+      dispatch(AuthActionCreators.loggedOut());
     }
+  })
 
-    function updateSigninStatus(isSignedIn) {
-      if (isSignedIn) {
-        console.log("The User is signed in")
-      } else {
-        console.log("The User is signed out")
-      }
-
-      setIsAuthorized(isSignedIn)
-    }
-    
-  }, [])
-
-  if(isAuthorized) {
+  if(loginStatus) {
     return (
       <KnowledgeFilesPage />
     )

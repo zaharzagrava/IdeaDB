@@ -1,24 +1,27 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
-import { Button } from '@material-ui/core';
+import { firebaseUI } from "../../index";
+import * as firebase from 'firebase/app';
 
 function AuthorizePage() {
 
-  async function authorizeUser() {
-    try {
-      await window.gapi.auth2.getAuthInstance().signIn({
-        prompt: 'select_account'
-      });
-    } catch (error) {
-      console.log("!Error!")
-      console.log(error)
-    }
+  useEffect(() => {
+    firebaseUI.start("#firebase-ui-container", {
+      signInSuccessUrl: '/',
+      signInOptions: [
+        firebase.auth.GoogleAuthProvider.PROVIDER_ID
+      ],
+      tosUrl: '/terms-of-service' // This doesn't exist yet
+    })
+  }, [])
+
+  if (firebaseUI.isPendingRedirect()) {
+    console.log("isPendingRedirect")
   }
 
   return (
-    <>
-      <Button onClick={() => authorizeUser()}>Authorize</Button>
-    </>
+    <div id="firebase-ui-container">
+    </div>
   )
 }
 

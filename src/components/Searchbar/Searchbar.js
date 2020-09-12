@@ -8,6 +8,7 @@ import * as Yup from "yup";
 import { API, graphqlOperation } from 'aws-amplify';
 import { postKnowledgeFile } from "../../graphql/mutations";
 import { getKnowledgeFiles1 } from "../../graphql/myqueries";
+import * as firebase from 'firebase/app';
 
 import { SearchBarActionCreators as ACs } from "../../redux/SearchBar";
 import { Formik, Form } from 'formik';
@@ -40,7 +41,11 @@ function Searchbar() {
     // Clear previous files from redux
     dispatch(KnowledgeFileActionCreators.knowledgeFilesReloaded());
 
-    const response = await API.graphql(graphqlOperation(postKnowledgeFile));
+    const idToken = await firebase.auth().currentUser.getIdToken();
+
+    const response = await API.graphql(graphqlOperation(postKnowledgeFile, {
+      idToken: idToken
+    }));
 
     console.log("@response")
     console.log(response)
@@ -52,12 +57,15 @@ function Searchbar() {
 
   async function loadKnowledgeFiles(values) {
     console.log("@loadKnowledgeFiles")
+    
+    const idToken = await firebase.auth().currentUser.getIdToken();
 
     const variables = {
       orderByFields: ["LAST_DATE_TIME_MODIFIED", "DATE_TIME_CREATED"],
       orderByDirections: ["DESC", "DESC"],
       limit: 10,
-      offset: 0
+      offset: 0,
+      idToken: idToken
     };
 
     variables.regexList = values.regexList.split('\n');

@@ -6,6 +6,7 @@ import axios from "axios";
 import { Button } from "@material-ui/core";
 import { API, graphqlOperation } from 'aws-amplify';
 import { getKnowledgeFiles1 } from "../../graphql/myqueries";
+import * as firebase from 'firebase/app';
 
 import { KnowledgeFileActionCreators } from "../../redux/knowledgeFile";
 import KnowledgeFile from "../KnowledgeFile/KnowledgeFile";
@@ -22,6 +23,8 @@ function KnowledgeFileList() {
     async function loadKnowledgeFiles() {
       console.log("@loadKnowledgeFiles")
 
+      const idToken = await firebase.auth().currentUser.getIdToken();
+
       let response = null;
       try {
         // Default Search
@@ -30,7 +33,8 @@ function KnowledgeFileList() {
           orderByFields: ["LAST_DATE_TIME_MODIFIED", "DATE_TIME_CREATED"],
           orderByDirections: ["DESC", "DESC"],
           limit: 10,
-          offset: 0
+          offset: 0,
+          idToken: idToken
         }));
   
         console.log("@response")

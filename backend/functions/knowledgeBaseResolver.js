@@ -1,6 +1,9 @@
 const { Client } = require('pg'); //  Needs the layer0 Lambda Layer
 const knex = require('knex');     //  Needs the layer0 Lambda Layer
 const _ = require('lodash');
+const admin = require('firebase-admin');
+
+const fs = require('fs');
 
 exports.handler = async (event, context, callback) => {
   console.log('@start of knowledgeBaseResolver 1.0.0');
@@ -18,36 +21,65 @@ exports.handler = async (event, context, callback) => {
     }
   });
   
+  let firebaseApp = null;
+  if (!admin.apps.length) {
+    firebaseApp = admin.initializeApp({
+      credential: admin.credential.applicationDefault()
+    });
+  }
+  
+  let clientId= null;
+  try {
+    let uid = null;
+    if(!event.arguments.idToken) {
+      clientId = 1;
+    } else {
+      let data = await admin.auth().verifyIdToken(event.arguments.idToken);
+      uid = data.uid;
+      
+      console.log("@uid")
+      console.log(uid)
+      
+      data = await knexConnection('client')
+                                .select()
+                                .where('uid', uid);
+      
+      console.log("@clientData")
+      console.log(data[0])
+      
+      clientId = data[0].id;
+    }
+  } catch (error) {
+    console.log("@error")
+    console.log(error)
+  }
+  
+  console.log("@clientId")
+  console.log(clientId)
+  
   let data = null;
   let response = {};
   
-  const underscoredSelectionSetList = [];
+  const selectionSetList = [];
   event.info.selectionSetList.map((field) => {
-    underscoredSelectionSetList.push(decamelize(field));
+    selectionSetList.push(`knowledge_file.${decamelize(field)}`);
   })
   
-  console.log('@underscoredSelectionSetList')
-  console.log(underscoredSelectionSetList)
+  console.log('@selectionSetList')
+  console.log(selectionSetList)
   
-  let underscoredArguments = {}
-  
-  for (var argumentName in event.arguments) {
-    if (event.arguments.hasOwnProperty(argumentName)) {
-      const argumentValue = event.arguments[argumentName];
-      underscoredArguments[decamelize(argumentName)] = argumentValue;
-    }
-  }
-  
-  console.log('@underscoredArguments')
-  console.log(underscoredArguments)
+  let args = camelCaseArgumentsToSnakeCaseObj(event.arguments);
+  delete args["id_token"];
+  let withTablePrefixArgs = addPrefixToKeys(args, 'knowledge_file.');
   
   switch (event.info.fieldName) {
     case "getKnowledgeFile":
       console.log('@getKnowledgeFile field');
       
       data = await knexConnection('knowledge_file')
-              .select(underscoredSelectionSetList)
-              .where('id', underscoredArguments.id);
+                    .join('client_knowledge_file', 'knowledge_file.id', 'client_knowledge_file.knowledge_file_id')
+                    .select(selectionSetList)
+                    .where('knowledge_file.id', args.id);
       
       data = data[0];
   
@@ -56,7 +88,7 @@ exports.handler = async (event, context, callback) => {
       
       // Rewriting underscored object data to camelCased object response
       event.info.selectionSetList.map((field, index) => {
-        response[field] = data[underscoredSelectionSetList[index]];
+        response[field] = data[_.snakeCase(field)];
       });
       
       break;
@@ -64,20 +96,23 @@ exports.handler = async (event, context, callback) => {
     case "postKnowledgeFile":
       console.log('@postKnowledgeFile field');
       
-      underscoredArguments["date_time_created"] = "now()";
-      underscoredArguments["last_date_time_modified"] = "now()";
+      args["date_time_created"] = "now()";
+      args["last_date_time_modified"] = "now()";
       
       data = await knexConnection('knowledge_file')
-              .insert(underscoredArguments, underscoredSelectionSetList);
+              .insert(args, selectionSetList);
               
       data = data[0];
   
       console.log('@data');
       console.log(data);
       
+      await knexConnection('client_knowledge_file')
+              .insert({client_id: clientId, knowledge_file_id: data.id});
+      
       // Rewriting underscored object data to camelCased object response
       event.info.selectionSetList.map((field, index) => {
-        response[field] = data[underscoredSelectionSetList[index]];
+        response[field] = data[_.snakeCase(field)];
       });
       
       break;
@@ -85,11 +120,23 @@ exports.handler = async (event, context, callback) => {
     case "putKnowledgeFile":
       console.log('@putKnowledgeFile field');
       
-      underscoredArguments["last_date_time_modified"] = "now()";
+      args["last_date_time_modified"] = "now()";
       
       data = await knexConnection('knowledge_file')
-              .update(underscoredArguments, underscoredSelectionSetList)
-              .where('id', underscoredArguments.id);
+                    .join('client_knowledge_file', 'knowledge_file.id', 'client_knowledge_file.knowledge_file_id')
+                    .select(selectionSetList)
+                    .where('knowledge_file.id', args.id)
+                    .andWhere('client_knowledge_file.client_id', clientId);
+      
+      // if there is no such knowledge_file or it is not a property of this client
+      if(!data[0]) {
+        callback(`This file does not exist or is not your property.`);
+        break;
+      }
+      
+      data = await knexConnection('knowledge_file')
+              .update(args, selectionSetList)
+              .where('knowledge_file.id', args.id);
       
       data = data[0];
   
@@ -98,7 +145,7 @@ exports.handler = async (event, context, callback) => {
       
       // Rewriting underscored object data to camelCased object response
       event.info.selectionSetList.map((field, index) => {
-        response[field] = data[underscoredSelectionSetList[index]];
+        response[field] = data[_.snakeCase(field)];
       });
       
       break;
@@ -107,12 +154,20 @@ exports.handler = async (event, context, callback) => {
       console.log('@deleteKnowledgeFile field');
       
       data = await knexConnection('knowledge_file')
-              .select(underscoredSelectionSetList)
-              .where('id', underscoredArguments.id);
+                    .join('client_knowledge_file', 'knowledge_file.id', 'client_knowledge_file.knowledge_file_id')
+                    .select(selectionSetList)
+                    .where('knowledge_file.id', args.id)
+                    .andWhere('client_knowledge_file.client_id', clientId);
+      
+      // if there is no such knowledge_file or it is not a property of this client
+      if(!data[0]) {
+        callback(`This file does not exist or is not your property.`);
+        break;
+      }
       
       await knexConnection('knowledge_file')
               .del()
-              .where('id', underscoredArguments.id);
+              .where('id', withTablePrefixArgs['knowledge_file.id']);
       
       data = data[0];
   
@@ -121,7 +176,7 @@ exports.handler = async (event, context, callback) => {
       
       // Rewriting underscored object data to camelCased object response
       event.info.selectionSetList.map((field, index) => {
-        response[field] = data[underscoredSelectionSetList[index]];
+        response[field] = data[_.snakeCase(field)];
       });
       
       break;
@@ -129,32 +184,33 @@ exports.handler = async (event, context, callback) => {
     case "getKnowledgeFiles":
       console.log('@getKnowledgeFiles field');
       
-      if(underscoredArguments.order_by_fields.length !==
-         underscoredArguments.order_by_directions.length) {
+      if(args.order_by_fields.length !==
+         args.order_by_directions.length) {
         callback(`orderByFields and orderByDirections arrays should be of one length`);
       }
       
       let query = knexConnection('knowledge_file');
       
-      console.log("typeof underscoredArguments.properties")
-      console.log(typeof underscoredArguments.properties)
-      
-      if(underscoredArguments.properties !== null &&
-         underscoredArguments.properties !== undefined) {
-        query = query.whereRaw('knowledge_file.properties @> ?::jsonb', [underscoredArguments.properties]);
+      for (var i = 0; i < args.regex_list.length; i++) {
+        const regex = args.regex_list[i];
+        
+        console.log("@regex")
+        console.log(regex)
+        
+        if(i === 0) {
+          query = query.where('knowledge_file.src_text', '~', regex);
+        } else {
+          query = query.andWhere('knowledge_file.src_text', '~', regex);
+        }
       }
       
-      if(underscoredArguments.plain_text !== null &&
-         underscoredArguments.properties !== undefined) {
-        query = query.where(`plain_text`, 'like', `%${underscoredArguments.plain_text}%`);
-      }
-      
+      query = query.andWhere('client_knowledge_file.client_id', clientId);
+
       const orderSettings = []
-      for (var i = 0; i < underscoredArguments.order_by_fields.length; i++) {
-        underscoredArguments.order_by_fields[i];
+      for (var i = 0; i < args.order_by_fields.length; i++) {
         orderSettings.push({
-          column: _.snakeCase(underscoredArguments.order_by_fields[i]),
-          order: underscoredArguments.order_by_directions[i]
+          column: _.snakeCase(args.order_by_fields[i]),
+          order: args.order_by_directions[i]
         })
       }
       
@@ -162,9 +218,10 @@ exports.handler = async (event, context, callback) => {
       console.log(orderSettings);
       
       data = await query.orderBy(orderSettings)
-                        .limit(underscoredArguments.limit)
-                        .offset(underscoredArguments.offset)
-                        .select(underscoredSelectionSetList);
+                        .limit(withTablePrefixArgs.limit)
+                        .offset(withTablePrefixArgs.offset)
+                        .join('client_knowledge_file', 'knowledge_file.id', 'client_knowledge_file.knowledge_file_id')
+                        .select(selectionSetList);
       
       console.log('@data');
       console.log(data);
@@ -172,12 +229,10 @@ exports.handler = async (event, context, callback) => {
       // Rewriting underscored array data to camelCased array response
       response = [];
       for (let i = 0; i < data.length; i++) {
-        const knowledgeFile = data[i];
-        
         response.push({});
         
         event.info.selectionSetList.map((field, index) => {
-          response[i][field] = knowledgeFile[underscoredSelectionSetList[index]];
+          response[i][field] = data[i][_.snakeCase(field)];
         });
       }
       
@@ -216,4 +271,38 @@ function camelize(str) {
 
 function decamelize(str) {
   return str.replace(/\.?([A-Z]+)/g, function (x,y){return "_" + y.toLowerCase()}).replace(/^_/, "");
+}
+
+function camelCaseArgumentsToSnakeCaseObj(obj) {
+  
+  let underscoredObj = {}
+  
+  for (var argumentName in obj) {
+    if (obj.hasOwnProperty(argumentName)) {
+      const argumentValue = obj[argumentName];
+      underscoredObj[`${decamelize(argumentName)}`] = argumentValue;
+    }
+  }
+  
+  console.log('@underscoredObj')
+  console.log(underscoredObj)
+  
+  return underscoredObj;
+}
+
+function addPrefixToKeys(obj, prefix) {
+  
+  let prefixedObj = {}
+  
+  for (var argumentName in obj) {
+    if (obj.hasOwnProperty(argumentName)) {
+      const argumentValue = obj[argumentName];
+      prefixedObj[`${prefix}${decamelize(argumentName)}`] = argumentValue;
+    }
+  }
+  
+  console.log('@obj')
+  console.log(obj)
+  
+  return prefixedObj;
 }

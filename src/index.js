@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 
 import './util/global/global.css';
 import './util/global/content-styles.css'
+import '../node_modules/firebaseui/dist/firebaseui.css'
 import App from './App';
 
 import { createStore } from 'redux';
@@ -13,6 +14,7 @@ import * as serviceWorker from './serviceWorker';
 
 import * as firebase from 'firebase/app';
 import "firebase/auth";
+import * as firebaseui from 'firebaseui'
 
 import { StylesProvider } from '@material-ui/core/styles';
 
@@ -23,6 +25,9 @@ import { StylesProvider } from '@material-ui/core/styles';
 // import appSyncConfiguration from "./appsyncconfiguration.json";
 import Amplify, { API, graphqlOperation } from 'aws-amplify';
 import awsconfig from './aws-exports';
+
+// ---
+import { AuthActionCreators } from "./redux/auth";
 
 // --- Setting up Firebase
 const firebaseConfig = {
@@ -37,6 +42,10 @@ const firebaseConfig = {
 };
 
 export const firebaseApp = firebase.initializeApp(firebaseConfig);
+export const firebaseUI = new firebaseui.auth.AuthUI(firebase.auth())
+
+
+// --- Setting up Firebase
 
 // --- Setting up Redux & Redux Dev Tools
 const store = createStore(
@@ -53,6 +62,7 @@ const store = createStore(
 //     apiKey: appSyncConfiguration.AppSync.Default.ApiKey
 //   }
 // })
+
 Amplify.configure(awsconfig);
 
 ReactDOM.render(

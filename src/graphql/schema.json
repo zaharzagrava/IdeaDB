@@ -28,6 +28,15 @@
               }
             },
             "defaultValue" : null
+          }, {
+            "name" : "idToken",
+            "description" : null,
+            "type" : {
+              "kind" : "SCALAR",
+              "name" : "String",
+              "ofType" : null
+            },
+            "defaultValue" : null
           } ],
           "type" : {
             "kind" : "OBJECT",
@@ -117,6 +126,15 @@
             "type" : {
               "kind" : "SCALAR",
               "name" : "Int",
+              "ofType" : null
+            },
+            "defaultValue" : null
+          }, {
+            "name" : "idToken",
+            "description" : null,
+            "type" : {
+              "kind" : "SCALAR",
+              "name" : "String",
               "ofType" : null
             },
             "defaultValue" : null
@@ -297,6 +315,15 @@
               "ofType" : null
             },
             "defaultValue" : null
+          }, {
+            "name" : "idToken",
+            "description" : null,
+            "type" : {
+              "kind" : "SCALAR",
+              "name" : "String",
+              "ofType" : null
+            },
+            "defaultValue" : null
           } ],
           "type" : {
             "kind" : "OBJECT",
@@ -310,6 +337,15 @@
           "description" : null,
           "args" : [ {
             "name" : "srcText",
+            "description" : null,
+            "type" : {
+              "kind" : "SCALAR",
+              "name" : "String",
+              "ofType" : null
+            },
+            "defaultValue" : null
+          }, {
+            "name" : "idToken",
             "description" : null,
             "type" : {
               "kind" : "SCALAR",
@@ -339,6 +375,15 @@
                 "name" : "ID",
                 "ofType" : null
               }
+            },
+            "defaultValue" : null
+          }, {
+            "name" : "idToken",
+            "description" : null,
+            "type" : {
+              "kind" : "SCALAR",
+              "name" : "String",
+              "ofType" : null
             },
             "defaultValue" : null
           } ],
