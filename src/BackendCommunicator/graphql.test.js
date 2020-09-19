@@ -5,6 +5,9 @@ import {
   deleteKnowledgeFile,
 } from './graphql';
 import { server, graphql } from '../test/setupServer';
+
+jest.mock('./firebase');
+
 test.only('renders learn react link', async () => {
   const response = await loadKnowledgeFiles(
     ['.'],

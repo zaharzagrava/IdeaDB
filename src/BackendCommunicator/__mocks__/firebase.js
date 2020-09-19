@@ -1,13 +1,16 @@
 export const firebase = {
-  auth: {
-    GoogleAuthProvider: {
-      PROVIDER_ID: 'mock',
-    },
-    onAuthStateChanged: function () {},
+  auth: function () {
+    return {
+      currentUser: {
+        getIdToken: function () {
+          return 'MOCKED_TOKEN';
+        },
+      },
+    };
   },
 };
 
 export const firebaseAuthUI = {
-  start: function () {},
-  isPendingRedirect: function () {},
+  start: jest.fn(),
+  isPendingRedirect: jest.fn(),
 };

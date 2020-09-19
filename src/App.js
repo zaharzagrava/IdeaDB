@@ -12,11 +12,18 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    firebase.auth.onAuthStateChanged(
-      dispatch,
-      AuthActionCreators.loggedIn(),
-      AuthActionCreators.loggedOut()
-    );
+    console.log('@App');
+    console.log(firebase.auth.GoogleAuthProvider.PROVIDER_ID);
+    firebase.auth().onAuthStateChanged((user) => {
+      // if user isn't null then we logged in
+      if (user) {
+        console.log('@login');
+        dispatch(AuthActionCreators.loggedIn());
+      } else {
+        console.log('@logout');
+        dispatch(AuthActionCreators.loggedOut());
+      }
+    });
   }, []);
 
   if (loginStatus) {

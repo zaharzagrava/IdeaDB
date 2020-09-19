@@ -17,24 +17,5 @@ if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
-const wrappedFirebase = {
-  auth: {
-    onAuthStateChanged: function (dispatch, onLoggedIn, onLoggedOut) {
-      firebase.auth().onAuthStateChanged((user) => {
-        // if user isn't null then we logged in
-        if (user) {
-          console.log('@login');
-          dispatch(onLoggedIn);
-        } else {
-          console.log('@logout');
-          dispatch(onLoggedOut);
-        }
-      });
-    },
-  },
-};
-
-export { wrappedFirebase as firebase };
-export { firebase as realFirebase };
-
+export { firebase };
 export const firebaseAuthUI = new firebaseui.auth.AuthUI(firebase.auth());

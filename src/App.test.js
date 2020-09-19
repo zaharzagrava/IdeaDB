@@ -3,7 +3,7 @@ import { getByTestId, render } from './util/test-utils';
 // import { render } from '@testing-library/react';
 import App from './App';
 
-import { firebase } from './BackendCommunicator/firebase';
+import * as firebase from 'firebase/app';
 
 jest.mock('./BackendCommunicator/firebase', () => {
   return {
@@ -22,8 +22,8 @@ jest.mock('./BackendCommunicator/firebase', () => {
   };
 });
 
-test('renders learn react link', () => {
+test.skip('renders learn react link', () => {
   const { getByText } = render(<App />, { initialState: {} });
-  // const linkElement = getByText(/learn react/i);
-  // expect(linkElement).toBeInTheDocument();
+  const linkElement = getByText(/learn react/i);
+  expect(linkElement).toBeInTheDocument();
 });

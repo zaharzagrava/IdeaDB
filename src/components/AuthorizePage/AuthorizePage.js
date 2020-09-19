@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { firebaseAuthUI } from '../../BackendCommunicator/firebase';
-import { firebase } from '../../BackendCommunicator/firebase';
+import { firebase, firebaseAuthUI } from '../../BackendCommunicator/firebase';
 
 function AuthorizePage() {
   useEffect(() => {

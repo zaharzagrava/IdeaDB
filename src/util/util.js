@@ -8,9 +8,21 @@ export class Error1 extends Error {
 }
 
 export function processError(error, path) {
-  // If this error was originated in this function
-  if (error.name === path) {
-    if (error.types.includes('input-filtering')) {
+  // If this error was originated not in this function
+  console.log(error);
+  if (error.hasOwnProperty('name') && error.name !== path) {
+    throw new Error1(
+      'An error as occured',
+      path,
+      ['input-processing', 'loud'],
+      error
+    );
+  } else {
+    if (
+      error.hasOwnProperty('types') &&
+      error.isArray() &&
+      error.types.includes('input-filtering')
+    ) {
       throw error;
     } else {
       throw new Error1(
@@ -20,12 +32,5 @@ export function processError(error, path) {
         error
       );
     }
-  } else {
-    throw new Error1(
-      'An error as occured',
-      path,
-      ['input-processing', 'loud'],
-      error
-    );
   }
 }

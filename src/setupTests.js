@@ -4,7 +4,14 @@
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom/extend-expect';
 import { server } from './test/setupServer';
-console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+
+// --- Loading Amplify
+import Amplify from 'aws-amplify';
+import awsconfig from './aws-exports';
+
+// --- Seting up Amplify
+Amplify.configure(awsconfig);
+
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());

@@ -1,4 +1,4 @@
-import * as firebase from 'firebase/app';
+import { firebase } from './firebase';
 import { getKnowledgeFiles1 } from '../graphql/myqueries';
 import { API, graphqlOperation } from 'aws-amplify';
 import {
@@ -16,7 +16,9 @@ export const loadKnowledgeFiles = async (
   offset
 ) => {
   try {
+    console.log('@1');
     const idToken = await firebase.auth().currentUser.getIdToken();
+    console.log('@2');
 
     const response = await API.graphql(
       graphqlOperation(getKnowledgeFiles1, {
@@ -31,14 +33,13 @@ export const loadKnowledgeFiles = async (
 
     return response.data.getKnowledgeFiles;
   } catch (error) {
-    console.log(error);
+    processError(error, 'src/BackendCommunicator/loadKnowledgeFiles');
   }
 };
 
 export const putKnowledgeFile = async (knowledgeFile, srcText) => {
   try {
     const idToken = await firebase.auth().currentUser.getIdToken();
-
     const response = await API.graphql(
       graphqlOperation(putKnowledgeFile0, {
         id: knowledgeFile.id,
