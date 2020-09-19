@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
-import * as firebase from 'firebase/app';
 
-import {} from './BackendCommunicator/firebase';
+import { firebase } from './BackendCommunicator/firebase';
 import { AuthActionCreators } from './redux/auth';
 import AuthorizePage from './components/AuthorizePage/AuthorizePage';
 import KnowledgeFilesPage from './components/KnowledgeFilesPage/KnowledgeFilesPage';
@@ -12,16 +11,13 @@ function App() {
   const loginStatus = useSelector((state) => state.auth.loginStatus);
   const dispatch = useDispatch();
 
-  firebase.auth().onAuthStateChanged((user) => {
-    // if user isn't null then we logged in
-    if (user) {
-      console.log('@login');
-      dispatch(AuthActionCreators.loggedIn());
-    } else {
-      console.log('@logout');
-      dispatch(AuthActionCreators.loggedOut());
-    }
-  });
+  useEffect(() => {
+    firebase.auth.onAuthStateChanged(
+      dispatch,
+      AuthActionCreators.loggedIn(),
+      AuthActionCreators.loggedOut()
+    );
+  }, []);
 
   if (loginStatus) {
     return <KnowledgeFilesPage />;

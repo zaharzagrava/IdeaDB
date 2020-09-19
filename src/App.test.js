@@ -1,13 +1,29 @@
-// import React from 'react';
-// import { render } from './util/test-utils';
-// import App from './App';
+import React from 'react';
+import { getByTestId, render } from './util/test-utils';
+// import { render } from '@testing-library/react';
+import App from './App';
 
-// test('renders learn react link', () => {
-//   const { getByText } = render(<App />, {
-//     initialState: { user: 'Redux User' },
-//   });
-//   // const linkElement = getByText(/learn react/i);
-//   // expect(linkElement).toBeInTheDocument();
-// });
+import { firebase } from './BackendCommunicator/firebase';
 
-test.todo('');
+jest.mock('./BackendCommunicator/firebase', () => {
+  return {
+    firebase: {
+      auth: {
+        GoogleAuthProvider: {
+          PROVIDER_ID: 'mock',
+        },
+        onAuthStateChanged: jest.fn(),
+      },
+    },
+    firebaseAuthUI: {
+      start: jest.fn(),
+      isPendingRedirect: jest.fn(),
+    },
+  };
+});
+
+test('renders learn react link', () => {
+  const { getByText } = render(<App />, { initialState: {} });
+  // const linkElement = getByText(/learn react/i);
+  // expect(linkElement).toBeInTheDocument();
+});
