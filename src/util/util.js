@@ -20,7 +20,7 @@ export function processError(error, path) {
   } else {
     if (
       error.hasOwnProperty('types') &&
-      error.isArray() &&
+      error.types.isArray() &&
       error.types.includes('input-filtering')
     ) {
       throw error;

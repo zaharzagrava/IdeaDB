@@ -22,7 +22,7 @@ jest.mock('./BackendCommunicator/firebase', () => {
   };
 });
 
-test.skip('renders learn react link', () => {
+test.skip('---', () => {
   const { getByText } = render(<App />, { initialState: {} });
   const linkElement = getByText(/learn react/i);
   expect(linkElement).toBeInTheDocument();

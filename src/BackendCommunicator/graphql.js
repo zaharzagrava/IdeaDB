@@ -17,6 +17,8 @@ export const loadKnowledgeFiles = async (
 ) => {
   try {
     console.log('@1');
+    console.log(JSON.stringify(firebase, 0, 1));
+
     const idToken = await firebase.auth().currentUser.getIdToken();
     console.log('@2');
 
