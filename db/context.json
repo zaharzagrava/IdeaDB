@@ -1,9 +1,0 @@
-{
-  "info": {
-    "selectionSetList": [ "id", "htmlText" ],
-    "selectionSetGraphQL": "{\n  id\n  htmlText\n}",
-    "parentTypeName": "Mutation",
-    "fieldName": "putKnowledgeFile",
-    "variables": {}
-  }
-}
