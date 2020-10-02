@@ -1,6 +1,4 @@
 import React, { ReactElement } from 'react';
-import styles from './KnowledgeFileList.module.scss';
-import SearchBar from '../SearchBar/SearchBar';
 import KnowledgeFileCard from '../KnowledgeFileCard/KnowledgeFileCard';
 import { useSelector } from 'react-redux';
 import {
@@ -11,15 +9,27 @@ import {
   StateType,
 } from '../../types/types';
 import { useGetKnowledgeFiles } from '../../backendapi/graphql';
-import { Card } from '@material-ui/core';
+import { Card, createStyles, makeStyles, Theme } from '@material-ui/core';
 
-interface Props {}
-function KnowledgeFileList({}: Props): ReactElement {
+// interface Props {}
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    textFileList: {
+      display: 'grid',
+      margin: 15,
+      gridGap: 15,
+    },
+  })
+);
+
+function KnowledgeFileList(): ReactElement {
+  const classes = useStyles();
+
   const regexList = useSelector<StateType, string[]>((state) => {
     return state.auth.regexList as string[];
   });
-  console.log('@regexList');
-  console.log(regexList);
+
   let { data: knowledgeFiles, status, error } = useGetKnowledgeFiles(
     'knowledge_file',
     {
@@ -43,13 +53,13 @@ function KnowledgeFileList({}: Props): ReactElement {
 
   if (status === 'loading')
     return (
-      <div className={styles.text_file_list}>
+      <div className={classes.textFileList}>
         <Card elevation={3}>Loading... </Card>
       </div>
     );
   if (error)
     return (
-      <div className={styles.text_file_list}>
+      <div className={classes.textFileList}>
         {' '}
         <Card elevation={3}>Error! {error.message}</Card>
       </div>
@@ -58,7 +68,7 @@ function KnowledgeFileList({}: Props): ReactElement {
   knowledgeFiles = knowledgeFiles as KnowledgeFile[];
 
   return (
-    <div className={styles.text_file_list}>
+    <div className={classes.textFileList}>
       {knowledgeFiles.map((knowledgeFile, index) => {
         return (
           <KnowledgeFileCard

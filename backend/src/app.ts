@@ -1,17 +1,9 @@
 import 'reflect-metadata';
-import express, { Application, Request, Response, NextFunction } from 'express';
+import express, { Application } from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import compression from 'compression';
 import cors from 'cors';
-import {
-  AuthChecker,
-  buildSchema,
-  MiddlewareFn,
-  Query,
-  registerEnumType,
-  Resolver,
-} from 'type-graphql';
-import knex from 'knex';
+import { buildSchema, registerEnumType } from 'type-graphql';
 
 import {
   KnowledgeFileResolver,
@@ -24,9 +16,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const main = async () => {
-  let firebaseApp = null;
   if (!admin.apps.length) {
-    firebaseApp = admin.initializeApp({
+    admin.initializeApp({
       credential: admin.credential.applicationDefault(),
     });
   }

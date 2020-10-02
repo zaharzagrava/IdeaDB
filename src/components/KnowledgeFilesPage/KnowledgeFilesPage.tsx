@@ -10,7 +10,7 @@ import { usePostKnowledgeFile } from '../../backendapi/graphql';
 import { useDispatch } from 'react-redux';
 import { useQueryCache } from 'react-query';
 
-interface Props {}
+// interface Props {}
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-function KnowledgeFilesPage({}: Props): ReactElement {
+function KnowledgeFilesPage(): ReactElement {
   const classes = useStyles();
   const dispatch = useDispatch();
   const queryCache = useQueryCache();

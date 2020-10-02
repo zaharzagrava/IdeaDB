@@ -1,12 +1,10 @@
 import React, { ReactElement, useEffect } from 'react';
 import {
-  Box,
   Card,
   CardContent,
   createStyles,
   Grid,
   makeStyles,
-  Paper,
   Theme,
   Typography,
 } from '@material-ui/core';
@@ -32,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-function AuthorizePage({}: Props): ReactElement {
+function AuthorizePage(): ReactElement {
   const classes = useStyles();
 
   useEffect(() => {

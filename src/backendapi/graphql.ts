@@ -1,11 +1,9 @@
 import { useMutation, useQuery } from 'react-query';
 import {
   DeleteKnowledgeFileArgs,
-  Direction,
   GetKnowledgeFilesArgs,
   KnowledgeFile,
   KnowledgeFileFields,
-  KnowledgeFileFieldsCAPS,
   PostKnowledgeFileArgs,
   PutKnowledgeFileArgs,
   QueryType,

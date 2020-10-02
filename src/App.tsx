@@ -5,7 +5,6 @@ import { AuthActionCreators } from './redux/auth';
 import { StateType } from './types/types';
 
 import { firebase } from './backendapi/firebase';
-import AuthorizePage from './components/AuthorizePage/AuthorizePage';
 
 interface Props {}
 

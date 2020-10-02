@@ -1,12 +1,10 @@
 import React, { ReactElement } from 'react';
-import styles from './SearchBar.module.scss';
 
 import { useQueryCache } from 'react-query';
 import {
   Button,
   Card,
   createStyles,
-  Divider,
   Grid,
   makeStyles,
   Theme,
@@ -14,8 +12,6 @@ import {
 } from '@material-ui/core';
 import { Formik, Form } from 'formik';
 
-import { KnowledgeFileFields } from '../../types/types';
-import { usePostKnowledgeFile } from '../../backendapi/graphql';
 import { useDispatch } from 'react-redux';
 import { AuthActionCreators } from '../../redux/auth';
 import CodeField from '../CodeField/CodeField';
@@ -28,7 +24,7 @@ const initialValues: InitialValues = {
   regexList: '',
 };
 
-interface Props {}
+// interface Props {}
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -38,7 +34,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-function SearchBar({}: Props): ReactElement {
+function SearchBar(): ReactElement {
   const classes = useStyles();
   const dispatch = useDispatch();
   const queryCache = useQueryCache();
@@ -49,7 +45,7 @@ function SearchBar({}: Props): ReactElement {
   }
 
   return (
-    <div className={styles.filter}>
+    <div>
       <Formik
         initialValues={initialValues}
         // validationSchema={validationSchema}

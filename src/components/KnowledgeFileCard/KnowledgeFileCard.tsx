@@ -2,14 +2,12 @@ import React, { ReactElement } from 'react';
 
 import {
   Card,
-  Button,
-  Divider,
   makeStyles,
   createStyles,
   Theme,
   IconButton,
 } from '@material-ui/core';
-import './KnowledgeFileContent.css'; // has to be after CKEditor import
+// import './KnowledgeFileContent.css'; // has to be after CKEditor import
 import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-yaml';
 import 'ace-builds/src-noconflict/theme-github';
