@@ -55,8 +55,12 @@ const main = async () => {
 
   apolloServer.applyMiddleware({ app: expressServer, path: '/graphql' });
 
-  expressServer.listen(4000, () => {
-    console.log('Express server is listening on port 4000, on path /graphql');
+  expressServer.listen(process.env.port || 4000, () => {
+    console.log(
+      `Express server is listening on port ${
+        process.env.port || 4000
+      }, on path /graphql`
+    );
   });
 };
 

@@ -16,7 +16,10 @@ import { ApolloClient, InMemoryCache } from '@apollo/client';
 
 // --- Setting up Apollo Client
 export const client = new ApolloClient({
-  uri: 'http://localhost:4000/graphql',
+  uri:
+    process.env.NODE_ENV === 'development'
+      ? 'http://localhost:4000/graphql'
+      : 'http://knowledgebase-env.eba-wmjem75f.us-east-1.elasticbeanstalk.com/graphql',
   cache: new InMemoryCache({
     addTypename: false,
   }),
