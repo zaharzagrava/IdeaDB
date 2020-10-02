@@ -6,6 +6,7 @@ import {
   KnowledgeFile,
   KnowledgeFileFields,
   KnowledgeFileFieldsCAPS,
+  NKnowledgeFile,
   StateType,
 } from '../../types/types';
 import { useGetKnowledgeFiles } from '../../backendapi/graphql';
@@ -31,7 +32,7 @@ function KnowledgeFileList(): ReactElement {
   });
 
   let { data: knowledgeFiles, status, error } = useGetKnowledgeFiles(
-    'knowledge_file',
+    NKnowledgeFile,
     {
       regexList: regexList,
       knowledgeFileOrderSettings: [

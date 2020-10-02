@@ -1,3 +1,6 @@
+import { queryCache } from 'react-query';
+import { ServerDataType, NamesDataType } from '../types/types';
+
 /**
  *
  * @param message Custom message of the error
@@ -61,6 +64,58 @@ export function processError(error: Error, path: string) {
       name: path,
       types: ['input-processing', 'loud'],
       src: error,
+    });
+  }
+}
+
+export async function updateQueryCache<DT extends ServerDataType[]>(
+  type: NamesDataType,
+  exception: string[],
+  newData: DT
+) {
+  const exceptionQuery = queryCache.getQuery(exception);
+
+  if (exceptionQuery === undefined) {
+    throw new Error('excption paramter should return at least one query');
+  }
+
+  const queries = queryCache.getQueries((query) => {
+    return (
+      query.queryKey.includes(type) &&
+      query.queryHash !== exceptionQuery.queryHash
+    );
+  });
+
+  for (let i = 0; i < queries.length; i++) {
+    const queryKey = queries[i].queryKey;
+
+    const updateData = queryCache.getQueryData<DT | undefined>(queryKey);
+
+    if (updateData !== undefined) {
+      for (let i = 0; i < updateData.length; i++) {
+        // If newData has same element that oldData has
+        const newDataElem = newData.filter(
+          (elem) => elem.id === updateData[i].id
+        );
+
+        if (newDataElem.length > 1) {
+          throw new Error('');
+        }
+
+        if (newDataElem.length === 1) {
+          console.log('@4');
+          console.log({ newData, updateData });
+
+          updateData[i] = newDataElem[0];
+        }
+      }
+    }
+
+    console.log('@2');
+    console.log({ updateData });
+
+    queryCache.setQueryData<DT | undefined, Error>(queryKey, () => {
+      return updateData;
     });
   }
 }

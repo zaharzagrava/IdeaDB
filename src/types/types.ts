@@ -3,7 +3,7 @@ import rootReducer from '../redux/index';
 
 export type StateType = ReturnType<typeof rootReducer>;
 
-/* Application data types */
+/* Server data types */
 export interface KnowledgeFile {
   id: number;
   srcText?: string;
@@ -11,6 +11,18 @@ export interface KnowledgeFile {
   dateTimeCreated?: string;
   wordCount?: string;
 }
+
+export interface Client {
+  id: number;
+  fullName?: string;
+}
+
+export type ServerDataType = KnowledgeFile | Client;
+
+export const NKnowledgeFile = 'knowledge_file';
+export const NClient = 'client';
+
+export type NamesDataType = typeof NKnowledgeFile | typeof NClient;
 
 export enum KnowledgeFileFields {
   id = 'id',
