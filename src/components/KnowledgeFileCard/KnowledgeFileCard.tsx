@@ -1,6 +1,14 @@
 import React, { ReactElement } from 'react';
 
-import { Card, Button, Divider } from '@material-ui/core';
+import {
+  Card,
+  Button,
+  Divider,
+  makeStyles,
+  createStyles,
+  Theme,
+  IconButton,
+} from '@material-ui/core';
 import './KnowledgeFileContent.css'; // has to be after CKEditor import
 import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-yaml';
@@ -12,12 +20,29 @@ import {
 } from '../../backendapi/graphql';
 import { KnowledgeFile, KnowledgeFileFields } from '../../types/types';
 import { useQueryCache } from 'react-query';
+import CancelRoundedIcon from '@material-ui/icons/CancelRounded';
 
 interface Props {
   knowledgeFile: KnowledgeFile; // id of the knowledge_file editor UI element
 }
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    knowledgeFileCard: {
+      position: 'relative',
+      overflow: 'visible',
+      padding: theme.spacing(2),
+    },
+    closeButton: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+    },
+  })
+);
+
 function KnowledgeFileCard({ knowledgeFile }: Props): ReactElement {
+  const classes = useStyles();
   const queryCache = useQueryCache();
 
   const [putKNowledgeFile] = usePutKnowledgeFile(undefined, [
@@ -51,9 +76,7 @@ function KnowledgeFileCard({ knowledgeFile }: Props): ReactElement {
   };
 
   return (
-    <Card>
-      <Button onClick={onDeleteKnowledgeFile}>Delete</Button>
-      <Divider />
+    <Card className={classes.knowledgeFileCard} elevation={3}>
       <AceEditor
         mode="yaml"
         theme="github"
@@ -101,6 +124,16 @@ function KnowledgeFileCard({ knowledgeFile }: Props): ReactElement {
         name="UNIQUE_ID_OF_DIV"
         editorProps={{ $blockScrolling: true }}
       />
+      <IconButton
+        color="secondary"
+        aria-label="add an alarm"
+        onClick={onDeleteKnowledgeFile}
+        className={classes.closeButton}
+        disableFocusRipple
+        disableRipple
+      >
+        <CancelRoundedIcon />
+      </IconButton>
     </Card>
   );
 }

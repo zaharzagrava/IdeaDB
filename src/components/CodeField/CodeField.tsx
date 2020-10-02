@@ -15,29 +15,28 @@ function CodeField({ label, name }: Props): ReactElement {
     <Field name={name}>
       {({ field, form }: FieldProps) => {
         return (
-          <div id={name}>
-            <AceEditor
-              mode="yaml"
-              theme="github"
-              name={name}
-              maxLines={Infinity}
-              tabSize={2}
-              showGutter={false}
-              highlightActiveLine={false}
-              width={'100%'}
-              onChange={(event, editor) => {
-                // console.log("@onChange")
+          <AceEditor
+            mode="yaml"
+            theme="github"
+            name={name}
+            maxLines={Infinity}
+            tabSize={2}
+            // height={100}
+            showGutter={false}
+            highlightActiveLine={false}
+            width={'100%'}
+            onChange={(event, editor) => {
+              // console.log("@onChange")
 
-                form.setFieldValue(name, event);
-              }}
-              onBlur={(event, editor) => {
-                // console.log("@onBlur")
+              form.setFieldValue(name, event);
+            }}
+            onBlur={(event, editor) => {
+              // console.log("@onBlur")
 
-                form.setFieldTouched(name, true);
-              }}
-              value={field.value}
-            />
-          </div>
+              form.setFieldTouched(name, true);
+            }}
+            value={field.value}
+          />
         );
       }}
     </Field>

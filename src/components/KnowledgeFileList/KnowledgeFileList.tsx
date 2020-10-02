@@ -11,6 +11,7 @@ import {
   StateType,
 } from '../../types/types';
 import { useGetKnowledgeFiles } from '../../backendapi/graphql';
+import { Card } from '@material-ui/core';
 
 interface Props {}
 function KnowledgeFileList({}: Props): ReactElement {
@@ -40,8 +41,19 @@ function KnowledgeFileList({}: Props): ReactElement {
     ]
   );
 
-  if (status === 'loading') return <div>Loading...</div>;
-  if (error) return <div>Error! {error.message}</div>;
+  if (status === 'loading')
+    return (
+      <div className={styles.text_file_list}>
+        <Card elevation={3}>Loading... </Card>
+      </div>
+    );
+  if (error)
+    return (
+      <div className={styles.text_file_list}>
+        {' '}
+        <Card elevation={3}>Error! {error.message}</Card>
+      </div>
+    );
 
   knowledgeFiles = knowledgeFiles as KnowledgeFile[];
 

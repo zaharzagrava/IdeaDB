@@ -2,7 +2,16 @@ import React, { ReactElement } from 'react';
 import styles from './SearchBar.module.scss';
 
 import { useQueryCache } from 'react-query';
-import { Button, Divider } from '@material-ui/core';
+import {
+  Button,
+  Card,
+  createStyles,
+  Divider,
+  Grid,
+  makeStyles,
+  Theme,
+  Typography,
+} from '@material-ui/core';
 import { Formik, Form } from 'formik';
 
 import { KnowledgeFileFields } from '../../types/types';
@@ -21,29 +30,18 @@ const initialValues: InitialValues = {
 
 interface Props {}
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    searchBar: {
+      padding: theme.spacing(2),
+    },
+  })
+);
+
 function SearchBar({}: Props): ReactElement {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const queryCache = useQueryCache();
-
-  const [postKnowledgeFile] = usePostKnowledgeFile(() => {
-    dispatch(AuthActionCreators.regexListUpdated(['New File']));
-    queryCache.invalidateQueries('knowledge_file');
-  }, [
-    KnowledgeFileFields.id,
-    KnowledgeFileFields.srcText,
-    KnowledgeFileFields.lastDateTimeModified,
-  ]);
-
-  const onCreateKnowledgeFile = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ): void => {
-    event.preventDefault();
-
-    postKnowledgeFile({
-      srcText: 'New File',
-      idToken: '',
-    });
-  };
 
   async function onSubmitRegexList(values: InitialValues) {
     dispatch(AuthActionCreators.regexListUpdated(values.regexList.split('\n')));
@@ -52,18 +50,27 @@ function SearchBar({}: Props): ReactElement {
 
   return (
     <div className={styles.filter}>
-      <Button onClick={onCreateKnowledgeFile}>Create</Button>
-
       <Formik
         initialValues={initialValues}
         // validationSchema={validationSchema}
         onSubmit={onSubmitRegexList}
       >
         <Form>
-          <CodeField label={'Regex List'} name={'regexList'} />
-          <Button type="submit" color="primary">
-            Search
-          </Button>
+          <Card elevation={3}>
+            <Grid container direction="column" className={classes.searchBar}>
+              <Grid item>
+                <Typography gutterBottom>Regex:</Typography>
+              </Grid>
+              <Grid item>
+                <Card elevation={2}>
+                  <CodeField label={'Regex List'} name={'regexList'} />
+                </Card>
+              </Grid>
+            </Grid>
+            <Button type="submit" color="primary" fullWidth>
+              Search
+            </Button>
+          </Card>
         </Form>
       </Formik>
     </div>

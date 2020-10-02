@@ -1,7 +1,6 @@
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import * as firebaseui from 'firebaseui';
-import { idText } from 'typescript';
 import { Error1, processError } from '../utils/utils';
 
 const firebaseConfig = {
@@ -19,16 +18,16 @@ if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
-const getIdTokenPath = 'src/BackendCommunicator/loadKnowledgeFiles';
 export const getIdToken = async (): Promise<string> => {
-  try {
-    const err = (message: string) =>
-      new Error1({
-        message,
-        name: getIdTokenPath,
-        types: ['input-filtering', 'loud'],
-      });
+  const path = 'src/BackendCommunicator/loadKnowledgeFiles';
+  const err = (message: string) =>
+    new Error1({
+      message,
+      name: path,
+      types: ['input-filtering', 'loud'],
+    });
 
+  try {
     const firebaseUser = firebase.auth().currentUser;
 
     // (IF
@@ -43,7 +42,7 @@ export const getIdToken = async (): Promise<string> => {
 
     return idToken;
   } catch (error) {
-    throw processError(error, getIdTokenPath);
+    throw processError(error, path);
   }
 };
 

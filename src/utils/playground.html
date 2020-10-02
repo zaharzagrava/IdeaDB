@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      html,
+      body {
+        margin: 0px;
+      }
+
+      .alpha {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+      }
+
+      .beta {
+        flex-basis: 50%;
+        max-width: 100%;
+        flex-grow: 0;
+        box-sizing: border-box;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="alpha">
+      <div class="beta">1</div>
+      <div class="beta">2</div>
+    </div>
+  </body>
+</html>

@@ -43,7 +43,7 @@ ReactDOM.render(
         </React.StrictMode>
       </Provider>
     </ApolloProvider>
-    <ReactQueryDevtools initialIsOpen={false} />
+    <ReactQueryDevtools />
   </>,
   document.getElementById('root')
 );
