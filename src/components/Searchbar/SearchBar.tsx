@@ -13,7 +13,7 @@ import {
 import { Formik, Form } from 'formik';
 
 import { useDispatch } from 'react-redux';
-import { AuthActionCreators } from '../../redux/auth';
+import { AuthActionCreators } from '../../redux/client';
 import CodeField from '../CodeField/CodeField';
 
 interface InitialValues {

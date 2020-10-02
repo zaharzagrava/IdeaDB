@@ -5,7 +5,7 @@ import KnowledgeFileList from '../KnowledgeFileList/KnowledgeFileList';
 import { createStyles, Fab, makeStyles, Theme } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import { KnowledgeFileFields } from '../../types/types';
-import { AuthActionCreators } from '../../redux/auth';
+import { AuthActionCreators } from '../../redux/client';
 import { usePostKnowledgeFile } from '../../backendapi/graphql';
 import { useDispatch } from 'react-redux';
 import { useQueryCache } from 'react-query';

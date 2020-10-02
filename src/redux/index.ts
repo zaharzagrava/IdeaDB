@@ -1,11 +1,9 @@
 import { combineReducers } from 'redux';
 
-import KnowledgeFileReducer from './knowledgeFile';
-import AuthReducer from './auth';
+import ClientReducer from './client';
 
 export const rootReducer = combineReducers({
-  knowledgeFile: KnowledgeFileReducer,
-  auth: AuthReducer,
+  client: ClientReducer,
 });
 
 export default rootReducer;

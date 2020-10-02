@@ -1,4 +1,10 @@
 import produce from 'immer';
+import {
+  GetKnowledgeFilesArgs,
+  KnowledgeFileFields,
+  Direction,
+  KnowledgeFileFieldsCAPS,
+} from '../types/types';
 
 // Action Types
 export const LOGGED_IN = 'LOGGED_IN';
@@ -19,16 +25,37 @@ interface RegexListUpdated {
   payload: string[];
 }
 
-type AuthAction = LoggedIn | LoggedOut | RegexListUpdated;
+export type AuthAction = LoggedIn | LoggedOut | RegexListUpdated;
 
 export interface Auth {
   loginStatus: boolean;
-  regexList: string[];
+  knowledgeFileList: {
+    querySettings: GetKnowledgeFilesArgs;
+    fields: KnowledgeFileFields[];
+  };
 }
 
 const initialState: Auth = {
   loginStatus: false,
-  regexList: [''],
+  knowledgeFileList: {
+    querySettings: {
+      regexList: [''],
+      knowledgeFileOrderSettings: [
+        {
+          orderDirection: Direction.DESC,
+          orderField: KnowledgeFileFieldsCAPS.LAST_DATE_TIME_MODIFIED,
+        },
+      ],
+      limit: 5,
+      offset: 0,
+      idToken: '',
+    },
+    fields: [
+      KnowledgeFileFields.id,
+      KnowledgeFileFields.srcText,
+      KnowledgeFileFields.lastDateTimeModified,
+    ],
+  },
 };
 
 export default produce((draft: Auth, action: AuthAction) => {
@@ -42,7 +69,7 @@ export default produce((draft: Auth, action: AuthAction) => {
       return;
 
     case REGEX_LIST_UPDATED:
-      draft.regexList = action.payload;
+      draft.knowledgeFileList.querySettings.regexList = action.payload;
 
     default:
       return;

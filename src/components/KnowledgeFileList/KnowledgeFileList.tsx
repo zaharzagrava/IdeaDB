@@ -3,6 +3,7 @@ import KnowledgeFileCard from '../KnowledgeFileCard/KnowledgeFileCard';
 import { useSelector } from 'react-redux';
 import {
   Direction,
+  GetKnowledgeFilesArgs,
   KnowledgeFile,
   KnowledgeFileFields,
   KnowledgeFileFieldsCAPS,
@@ -16,7 +17,7 @@ import { Card, createStyles, makeStyles, Theme } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    textFileList: {
+    knowledgeFileList: {
       display: 'grid',
       margin: 15,
       gridGap: 15,
@@ -27,40 +28,32 @@ const useStyles = makeStyles((theme: Theme) =>
 function KnowledgeFileList(): ReactElement {
   const classes = useStyles();
 
-  const regexList = useSelector<StateType, string[]>((state) => {
-    return state.auth.regexList as string[];
+  const querySettings = useSelector<StateType, GetKnowledgeFilesArgs>(
+    (state) => {
+      return state.client.knowledgeFileList
+        .querySettings as GetKnowledgeFilesArgs;
+    }
+  );
+
+  const fields = useSelector<StateType, KnowledgeFileFields[]>((state) => {
+    return state.client.knowledgeFileList.fields as KnowledgeFileFields[];
   });
 
   let { data: knowledgeFiles, status, error } = useGetKnowledgeFiles(
     NKnowledgeFile,
-    {
-      regexList: regexList,
-      knowledgeFileOrderSettings: [
-        {
-          orderDirection: Direction.DESC,
-          orderField: KnowledgeFileFieldsCAPS.LAST_DATE_TIME_MODIFIED,
-        },
-      ],
-      limit: 5,
-      offset: 0,
-      idToken: '',
-    },
-    [
-      KnowledgeFileFields.id,
-      KnowledgeFileFields.srcText,
-      KnowledgeFileFields.lastDateTimeModified,
-    ]
+    querySettings,
+    fields
   );
 
   if (status === 'loading')
     return (
-      <div className={classes.textFileList}>
+      <div className={classes.knowledgeFileList}>
         <Card elevation={3}>Loading... </Card>
       </div>
     );
   if (error)
     return (
-      <div className={classes.textFileList}>
+      <div className={classes.knowledgeFileList}>
         {' '}
         <Card elevation={3}>Error! {error.message}</Card>
       </div>
@@ -69,7 +62,7 @@ function KnowledgeFileList(): ReactElement {
   knowledgeFiles = knowledgeFiles as KnowledgeFile[];
 
   return (
-    <div className={classes.textFileList}>
+    <div className={classes.knowledgeFileList}>
       {knowledgeFiles.map((knowledgeFile, index) => {
         return (
           <KnowledgeFileCard

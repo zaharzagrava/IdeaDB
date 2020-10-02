@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import KnowledgeFilesPage from './components/KnowledgeFilesPage/KnowledgeFilesPage';
-import { AuthActionCreators } from './redux/auth';
+import { AuthActionCreators } from './redux/client';
 import { StateType } from './types/types';
 
 import { firebase } from './backendapi/firebase';
@@ -9,7 +9,9 @@ import { firebase } from './backendapi/firebase';
 interface Props {}
 
 function App({}: Props): ReactElement {
-  const loginStatus = useSelector<StateType>((state) => state.auth.loginStatus);
+  const loginStatus = useSelector<StateType>(
+    (state) => state.client.loginStatus
+  );
   const dispatch = useDispatch();
 
   useEffect(() => {
