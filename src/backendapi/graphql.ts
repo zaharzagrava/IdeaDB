@@ -48,10 +48,6 @@ export function useGetKnowledgeFiles(
           name: 'backendapi/graphql.ts/useGetKnowledgeFiles',
           types: ['input-filtering', 'loud'],
         });
-      console.log('@query');
-      console.log(generateQuery(QueryType.getKnowledgeFiles, fields));
-      console.log('@variables');
-      console.log(getKnowledgeFilesArgs);
 
       const knowledgeFile = await client.query<
         { getKnowledgeFiles: KnowledgeFile[] },
@@ -60,9 +56,6 @@ export function useGetKnowledgeFiles(
         query: generateQuery(QueryType.getKnowledgeFiles, fields),
         variables: getKnowledgeFilesArgs,
       });
-
-      console.log('@knowledgeFile');
-      console.log(knowledgeFile);
 
       if (knowledgeFile.error !== undefined) {
         throw err('Request had an error');
@@ -126,22 +119,35 @@ export function usePutKnowledgeFile(
           name: 'backendapi/graphql.ts/usePutKnowledgeFile',
           types: ['input-filtering', 'loud'],
         });
+      try {
+        console.log('@variables');
+        console.log(variables);
 
-      console.log('@query');
-      console.log(generateQuery(QueryType.putKnowledgeFile, fields));
-      const knowledgeFile = await client.query<
-        { putKnowledgeFile: KnowledgeFile },
-        PutKnowledgeFileArgs
-      >({
-        query: generateQuery(QueryType.putKnowledgeFile, fields),
-        variables: variables,
-      });
+        console.log('@fields');
+        console.log(fields);
 
-      if (knowledgeFile.error !== undefined) {
-        throw err('Request had an error');
+        console.log('@query');
+        console.log(generateQuery(QueryType.putKnowledgeFile, fields));
+        const knowledgeFile = await client.query<
+          { putKnowledgeFile: KnowledgeFile },
+          PutKnowledgeFileArgs
+        >({
+          query: generateQuery(QueryType.putKnowledgeFile, fields),
+          variables: variables,
+        });
+
+        console.log('@knowledgeFile');
+        console.log(knowledgeFile);
+
+        if (knowledgeFile.error !== undefined) {
+          throw err('Request had an error');
+        }
+
+        return knowledgeFile.data.putKnowledgeFile;
+      } catch (error) {
+        console.log('@error');
+        throw error;
       }
-
-      return knowledgeFile.data.putKnowledgeFile;
     },
     {
       onSuccess: onSuccess,

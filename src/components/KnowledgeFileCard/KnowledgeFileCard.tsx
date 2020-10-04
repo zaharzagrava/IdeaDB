@@ -20,7 +20,7 @@ import { KnowledgeFile, KnowledgeFileFields } from '../../types/types';
 import { useQueryCache } from 'react-query';
 import CancelRoundedIcon from '@material-ui/icons/CancelRounded';
 
-interface Props {
+export interface Props {
   knowledgeFile: KnowledgeFile; // id of the knowledge_file editor UI element
 }
 
