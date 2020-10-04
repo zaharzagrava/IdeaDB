@@ -15,8 +15,19 @@ function App({}: Props): ReactElement {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    async function exec() {
+      console.log('@idToken');
+      const idToken = await firebase.auth().currentUser?.getIdToken();
+
+      console.log(idToken);
+    }
+
+    exec();
+
     firebase.auth().onAuthStateChanged((user) => {
       // if user isn't null then we logged in
+      console.log('@onAuthStateChanged');
+      console.log(user);
       if (user) {
         dispatch(AuthActionCreators.loggedIn());
       } else {

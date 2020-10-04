@@ -22,6 +22,10 @@ import RootReducer from './redux/';
 
 // IMporting React Query Dev Tools
 import { ReactQueryDevtools } from 'react-query-devtools';
+import Alphas from './components/Alphas/Alphas';
+
+//
+import { worker } from './test/setupWorker';
 
 // --- Setting up Redux & Redux Dev Tools
 declare global {
@@ -32,13 +36,15 @@ declare global {
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(RootReducer, composeEnhancers());
 
+worker.start();
+
 ReactDOM.render(
   <>
     <ApolloProvider client={client}>
       <Provider store={store}>
         <React.StrictMode>
           <StylesProvider>
-            <App />
+            <Alphas />
           </StylesProvider>
         </React.StrictMode>
       </Provider>

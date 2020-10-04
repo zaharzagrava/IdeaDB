@@ -120,14 +120,15 @@ export function usePutKnowledgeFile(
           types: ['input-filtering', 'loud'],
         });
       try {
-        console.log('@variables');
-        console.log(variables);
+        // console.log('@variables');
+        // console.log(variables);
 
-        console.log('@fields');
-        console.log(fields);
+        // console.log('@fields');
+        // console.log(fields);
 
-        console.log('@query');
-        console.log(generateQuery(QueryType.putKnowledgeFile, fields));
+        // console.log('@query');
+        // console.log(generateQuery(QueryType.putKnowledgeFile, fields));
+
         const knowledgeFile = await client.query<
           { putKnowledgeFile: KnowledgeFile },
           PutKnowledgeFileArgs
@@ -136,8 +137,8 @@ export function usePutKnowledgeFile(
           variables: variables,
         });
 
-        console.log('@knowledgeFile');
-        console.log(knowledgeFile);
+        // console.log('@knowledgeFile');
+        // console.log(knowledgeFile);
 
         if (knowledgeFile.error !== undefined) {
           throw err('Request had an error');
