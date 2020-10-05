@@ -17,7 +17,11 @@ import {
   useDeleteKnowledgeFile,
   usePutKnowledgeFile,
 } from '../../backendapi/graphql';
-import { KnowledgeFile, KnowledgeFileFields } from '../../types/types';
+import {
+  KnowledgeFile,
+  KnowledgeFileFields,
+  NKnowledgeFile,
+} from '../../types/types';
 import { useQueryCache } from 'react-query';
 import CancelRoundedIcon from '@material-ui/icons/CancelRounded';
 
@@ -70,7 +74,7 @@ function KnowledgeFileCard({ knowledgeFile }: Props): ReactElement {
       id: knowledgeFile.id,
       idToken: '',
     }).then(() => {
-      queryCache.invalidateQueries('knowledge_file');
+      queryCache.invalidateQueries(NKnowledgeFile);
     });
   };
 
@@ -129,8 +133,6 @@ function KnowledgeFileCard({ knowledgeFile }: Props): ReactElement {
         aria-label="add an alarm"
         onClick={onDeleteKnowledgeFile}
         className={classes.closeButton}
-        disableFocusRipple
-        disableRipple
       >
         <CancelRoundedIcon />
       </IconButton>

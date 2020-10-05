@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import KnowledgeFilesPage from './components/KnowledgeFilesPage/KnowledgeFilesPage';
 import { AuthActionCreators } from './redux/client';
 import { StateType } from './types/types';
-import { worker } from './test/setupWorker';
 
 import { firebase } from './backendapi/firebase';
 import AuthorizePage from './components/AuthorizePage/AuthorizePage';
@@ -27,11 +26,11 @@ function App({}: Props): ReactElement {
     });
   }, []);
 
-  if (loginStatus) {
-    return <KnowledgeFilesPage />;
-  } else {
-    return <AuthorizePage />;
-  }
+  // if (loginStatus) {
+  //   return <KnowledgeFilesPage />;
+  // } else {
+  return <AuthorizePage />;
+  // }
 }
 
 export default App;

@@ -40,8 +40,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "storybook": "cross-env REACT_APP_MODE=front-end start-storybook -p 6006 -s public",
-    "storybook-full": "cross-env REACT_APP_MODE=full start-storybook -p 6007 -s public",
+    "storybook": "cross-env STORYBOOK_MODE=front-end start-storybook -p 6006 -s public",
+    "storybook-full": "cross-env STORYBOOK_MODE=full start-storybook -p 6007 -s public",
     "build-storybook": "build-storybook -s public"
   },
   "eslintConfig": {

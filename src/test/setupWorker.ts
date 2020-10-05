@@ -1,4 +1,4 @@
-import { setupWorker, rest } from 'msw';
+import { setupWorker } from 'msw';
 import { handlers } from './handlers';
 
 // Export the worker instance, so we can await the activation on Storybook's runtime.

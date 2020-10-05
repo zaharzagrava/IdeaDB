@@ -31,54 +31,25 @@ export const handlers = [
   ),
 
   graphql.mutation('PostKnowledgeFile', (req, res, ctx) => {
-    if (req.body === undefined || req.body.variables === undefined)
-      throw new Error(
-        'req.body === undefined || req.body.variables !== undefined'
-      );
-
-    // Create new Knowledge File and add it to JSON database
-    const newId = knowledgeFiles[knowledgeFiles.length - 1].id + 1;
-    const newKnowledgeFile: KnowledgeFile = {
-      id: newId,
-      srcText: `This is a source of the knowledge file under #${newId}
-      - One data
-      - Two data
-      - Three data`,
-      dateTimeCreated:
-        knowledgeFiles[knowledgeFiles[knowledgeFiles.length - 1].id]
-          .dateTimeCreated,
-      lastDateTimeModified:
-        knowledgeFiles[knowledgeFiles[knowledgeFiles.length - 1].id]
-          .lastDateTimeModified,
-      wordCount:
-        knowledgeFiles[knowledgeFiles[knowledgeFiles.length - 1].id].wordCount,
-    };
-    knowledgeFiles.push(newKnowledgeFile);
-
     return res(
       ctx.data({
-        putKnowledgeFile: newKnowledgeFile,
+        postKnowledgeFile: knowledgeFiles[0],
       })
     );
   }),
 
   graphql.mutation('PutKnowledgeFile', (req, res, ctx) => {
-    if (req.body === undefined || req.body.variables === undefined)
-      throw new Error(
-        'req.body === undefined || req.body.variables !== undefined'
-      );
-
-    const responseData: KnowledgeFile = {
-      id: req.body.variables.id,
-      srcText: req.body.variables.srcText,
-      dateTimeCreated: knowledgeFiles[0].dateTimeCreated,
-      lastDateTimeModified: knowledgeFiles[0].lastDateTimeModified,
-      wordCount: knowledgeFiles[0].wordCount,
-    };
-
     return res(
       ctx.data({
-        putKnowledgeFile: responseData,
+        putKnowledgeFile: knowledgeFiles[0],
+      })
+    );
+  }),
+
+  graphql.mutation('DeleteKnowledgeFile', (req, res, ctx) => {
+    return res(
+      ctx.data({
+        deleteKnowledgeFile: knowledgeFiles[0],
       })
     );
   }),

@@ -3,6 +3,24 @@ import { Story, Meta } from '@storybook/react';
 
 import KnowledgeFileCard, { Props } from './KnowledgeFileCard';
 
+// import { graphql, rest } from 'msw';
+// import { worker } from '../../test/setupWorker';
+// import { GetKnowledgeFileArgs, KnowledgeFile } from '../../types/types';
+// import { knowledgeFiles } from '../../test/mockData';
+
+// worker.use(
+//   graphql.query<{ getKnowledgeFiles: KnowledgeFile[] }, GetKnowledgeFileArgs>(
+//     'GetKnowledgeFiles',
+//     (req, res, ctx) => {
+//       return res(
+//         ctx.data({
+//           getKnowledgeFiles: [knowledgeFiles[0]],
+//         })
+//       );
+//     }
+//   )
+// );
+
 export default {
   title: 'KnowledgeFileCard',
   component: KnowledgeFileCard,

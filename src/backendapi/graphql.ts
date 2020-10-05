@@ -49,7 +49,7 @@ export function useGetKnowledgeFiles(
           types: ['input-filtering', 'loud'],
         });
 
-      const knowledgeFile = await client.query<
+      const response = await client.query<
         { getKnowledgeFiles: KnowledgeFile[] },
         GetKnowledgeFilesArgs
       >({
@@ -57,11 +57,12 @@ export function useGetKnowledgeFiles(
         variables: getKnowledgeFilesArgs,
       });
 
-      if (knowledgeFile.error !== undefined) {
+      if (response.error !== undefined) {
+        console.log('@1');
         throw err('Request had an error');
       }
 
-      return knowledgeFile.data.getKnowledgeFiles;
+      return response.data.getKnowledgeFiles;
     }
   );
 }
@@ -82,7 +83,7 @@ export function usePostKnowledgeFile(
           types: ['input-filtering', 'loud'],
         });
 
-      const knowledgeFile = await client.query<
+      const response = await client.query<
         { postKnowledgeFile: KnowledgeFile },
         PostKnowledgeFileArgs
       >({
@@ -90,11 +91,11 @@ export function usePostKnowledgeFile(
         variables: values,
       });
 
-      if (knowledgeFile.error !== undefined) {
+      if (response.error !== undefined) {
         throw err('Request had an error');
       }
 
-      return knowledgeFile.data.postKnowledgeFile;
+      return response.data.postKnowledgeFile;
     },
     {
       onSuccess: onSuccess,
@@ -120,16 +121,7 @@ export function usePutKnowledgeFile(
           types: ['input-filtering', 'loud'],
         });
       try {
-        // console.log('@variables');
-        // console.log(variables);
-
-        // console.log('@fields');
-        // console.log(fields);
-
-        // console.log('@query');
-        // console.log(generateQuery(QueryType.putKnowledgeFile, fields));
-
-        const knowledgeFile = await client.query<
+        const response = await client.query<
           { putKnowledgeFile: KnowledgeFile },
           PutKnowledgeFileArgs
         >({
@@ -137,14 +129,11 @@ export function usePutKnowledgeFile(
           variables: variables,
         });
 
-        // console.log('@knowledgeFile');
-        // console.log(knowledgeFile);
-
-        if (knowledgeFile.error !== undefined) {
+        if (response.error !== undefined) {
           throw err('Request had an error');
         }
 
-        return knowledgeFile.data.putKnowledgeFile;
+        return response.data.putKnowledgeFile;
       } catch (error) {
         console.log('@error');
         throw error;
@@ -174,7 +163,7 @@ export function useDeleteKnowledgeFile(
           types: ['input-filtering', 'loud'],
         });
 
-      const knowledgeFile = await client.query<
+      const response = await client.query<
         { deleteKnowledgeFile: KnowledgeFile },
         DeleteKnowledgeFileArgs
       >({
@@ -182,11 +171,11 @@ export function useDeleteKnowledgeFile(
         variables: variables,
       });
 
-      if (knowledgeFile.error !== undefined) {
+      if (response.error !== undefined) {
         throw err('Request had an error');
       }
 
-      return knowledgeFile.data.deleteKnowledgeFile;
+      return response.data.deleteKnowledgeFile;
     },
     {
       onSuccess: onSuccess,
