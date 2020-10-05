@@ -1,14 +1,19 @@
 import React, { ReactElement, useState } from 'react';
 import axios from 'axios';
-interface Props {}
+export interface Props {
+  delta: number;
+}
 
-function Alphas({}: Props): ReactElement {
+function Alphas({ delta }: Props): ReactElement {
   const [users, setUsers] = useState([]);
 
   return (
     <div>
+      <h1>{delta}</h1>
       <button
         onClick={async (event) => {
+          setUsers([]);
+
           const response = await axios(
             'https://jsonplaceholder.typicode.com/users'
           );

@@ -91,48 +91,4 @@ export const handlers = [
       })
     );
   }),
-
-  // rest.get('*', async (req, res, ctx) => {
-  //   console.log('@WHHAAT?');
-  //   const data = await axios({
-  //     ...req,
-  //     url: req.url.toString(),
-  //     method: convertStringToLiteral(req.method, [
-  //       'link',
-  //       'get',
-  //       'GET',
-  //       'delete',
-  //       'DELETE',
-  //       'HEAD',
-  //       'options',
-  //       'OPTIONS',
-  //       'post',
-  //       'POST',
-  //       'put',
-  //       'PUT',
-  //       'patch',
-  //       'PATCH',
-  //       'purge',
-  //       'PURGE',
-  //       'LINK',
-  //       'unlink',
-  //       'UNLINK'
-  //     ]) as any,
-  //   });
-  //   return res(ctx.status(data.status), ctx.body(data.data));
-  // }),
 ];
-
-// function convertStringToLiteral(
-//   method: string,
-//   literalList:string[]
-// ) {
-//   for (let i = 0; i < literalList.length; i++) {
-//     const lmethod = literalList[i];
-//     if (method === lmethod) {
-//       return method as typeof lmethod;
-//     }
-//   }
-
-//   throw new Error('No method is compatible');
-// }

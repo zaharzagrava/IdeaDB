@@ -1,7 +1,8 @@
 -- main client object for clients
 CREATE TABLE client (
   id bigserial primary key,
-  full_name varchar(255)
+  full_name varchar(255),
+  uid varchar(255)
 );
 -- knowledge_file
 create table knowledge_file (

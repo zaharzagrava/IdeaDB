@@ -16,6 +16,6 @@ export default {
   },
 } as Meta;
 
-const Template: Story = () => <Alphas />;
+const Template: Story = () => <Alphas delta={5} />;
 
 export const Default = Template.bind({});

@@ -1,9 +1,11 @@
+import React from 'react';
 // --- Loading Redux
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import RootReducer from '../src/redux';
 
 import addons from '@storybook/addons';
+import { addDecorator } from '@storybook/react';
 
 import withRedux from 'addon-redux/withRedux';
 import withReduxEnhancer from 'addon-redux/enhancer';
@@ -28,19 +30,28 @@ import { withConsole } from '@storybook/addon-console';
 const withConsoleDecorator = (storyFn, context) =>
   withConsole()(storyFn)(context);
 
-// console.log('@process.env.STORYBOOK_MODE');
-// console.log(process.env.STORYBOOK_MODE);
-// if (
-//   typeof global.process === 'undefined' &&
-//   process.env.STORYBOOK_MODE === 'front-end'
-// ) {
-//   const { worker } = require('../src/test/setupWorker');
-//   console.log('@setupWorker');
-//   // Start the mocking when each story is loaded.
-//   // Repetitive calls to the `.start()` method do not register a new worker,
-//   // but check whether there's an existing once, reusing it, if so.
-//   worker.start();
-// }
+if (
+  typeof global.process === 'undefined' &&
+  process.env.REACT_APP_MODE === 'front-end'
+) {
+  const { worker } = require('../src/test/setupWorker');
+  worker.start();
+}
+
+// const withMSWDecorator = (storyFn) => {
+//   if (
+//     typeof global.process === 'undefined' &&
+//     process.env.REACT_APP_MODE === 'front-end'
+//   ) {
+//     const { worker } = require('../src/test/setupWorker');
+//     worker.start();
+//   }
+//   return <>{storyFn()}</>;
+// };
+
+const withStrictMode = (storyFn) => {
+  return <React.StrictMode>{storyFn()}</React.StrictMode>;
+};
 
 // --- setting up parameteres
 export const parameters = {
@@ -54,4 +65,8 @@ export const parameters = {
 };
 
 // --- setting up decorators
-export const decorators = [withReduxDecorator, withConsoleDecorator];
+export const decorators = [
+  withReduxDecorator,
+  withConsoleDecorator,
+  withStrictMode,
+];

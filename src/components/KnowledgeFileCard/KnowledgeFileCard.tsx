@@ -6,6 +6,7 @@ import {
   createStyles,
   Theme,
   IconButton,
+  Typography,
 } from '@material-ui/core';
 // import './KnowledgeFileContent.css'; // has to be after CKEditor import
 import AceEditor from 'react-ace';
@@ -75,6 +76,7 @@ function KnowledgeFileCard({ knowledgeFile }: Props): ReactElement {
 
   return (
     <Card className={classes.knowledgeFileCard} elevation={3}>
+      <Typography>Knowledge File:</Typography>
       <AceEditor
         mode="yaml"
         theme="github"
