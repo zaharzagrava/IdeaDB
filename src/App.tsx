@@ -26,11 +26,11 @@ function App({}: Props): ReactElement {
     });
   }, []);
 
-  // if (loginStatus) {
-  //   return <KnowledgeFilesPage />;
-  // } else {
-  return <AuthorizePage />;
-  // }
+  if (loginStatus) {
+    return <KnowledgeFilesPage />;
+  } else {
+    return <AuthorizePage />;
+  }
 }
 
 export default App;
