@@ -1,4 +1,4 @@
-knowledge-base is an open-source service that provides you with a new way of working with text documents. Instead of using a folder structure, you can filter them by regular expressions. Instead of opening them in a separate tabs (like in Google Docs) or windows (like Windows or MacOS) you immediately see them as a filtered list. These two distinctions make working with your documents easier (because, thanks to regex, you can find basically any kind of documents that you want) and faster (because there is no need to manage dozens of tabs for each opened document).
+knowledge-base is an open-source project that provides a new way of working with text documents. Instead of using a folder structure, you can filter them by regular expressions. Instead of opening them in a separate tabs (like in Google Docs) or windows (like Windows or MacOS) you immediately see them as a filtered list. These two distinctions make working with your documents easier (because, thanks to regex, you can find basically any kind of documents that you want) and faster (because there is no need to manage dozens of tabs for each opened document).
 
 ## Website
 
