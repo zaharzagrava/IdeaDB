@@ -98,7 +98,7 @@ function AuthorizePage(): ReactElement {
                 <Alert severity="warning">
                   <AlertTitle>Warning</AlertTitle>
                   Since this is a test project, all the data about every user{' '}
-                  <b>is deleted each 3 days</b>. If you want to use it for
+                  <b>is deleted periodically</b>. If you want to use it for
                   yourself long-term, consider branching it and hosting on your
                   own or contacting me. If I see that reasonable amount of
                   people is interested in using it, I will consider removing the

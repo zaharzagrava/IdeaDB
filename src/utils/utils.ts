@@ -89,13 +89,13 @@ export async function updateQueryCache<DT extends ServerDataType[]>(
   for (let i = 0; i < queries.length; i++) {
     const queryKey = queries[i].queryKey;
 
-    const updateData = queryCache.getQueryData<DT | undefined>(queryKey);
+    const toUpdateQueryData = queryCache.getQueryData<DT | undefined>(queryKey);
 
-    if (updateData !== undefined) {
-      for (let i = 0; i < updateData.length; i++) {
+    if (toUpdateQueryData !== undefined) {
+      for (let i = 0; i < toUpdateQueryData.length; i++) {
         // If newData has same element that oldData has
         const newDataElem = newData.filter(
-          (elem) => elem.id === updateData[i].id
+          (elem) => elem.id === toUpdateQueryData[i].id
         );
 
         if (newDataElem.length > 1) {
@@ -104,18 +104,18 @@ export async function updateQueryCache<DT extends ServerDataType[]>(
 
         if (newDataElem.length === 1) {
           console.log('@4');
-          console.log({ newData, updateData });
+          console.log({ newData, updateData: toUpdateQueryData });
 
-          updateData[i] = newDataElem[0];
+          toUpdateQueryData[i] = newDataElem[0];
         }
       }
     }
 
     console.log('@2');
-    console.log({ updateData });
+    console.log({ updateData: toUpdateQueryData });
 
     queryCache.setQueryData<DT | undefined, Error>(queryKey, () => {
-      return updateData;
+      return toUpdateQueryData;
     });
   }
 }

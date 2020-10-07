@@ -18,12 +18,15 @@ import {
   usePutKnowledgeFile,
 } from '../../backendapi/graphql';
 import {
+  GetKnowledgeFilesArgs,
   KnowledgeFile,
   KnowledgeFileFields,
   NKnowledgeFile,
+  StateType,
 } from '../../types/types';
 import { useQueryCache } from 'react-query';
 import CancelRoundedIcon from '@material-ui/icons/CancelRounded';
+import { useSelector } from 'react-redux';
 
 export interface Props {
   knowledgeFile: KnowledgeFile; // id of the knowledge_file editor UI element
@@ -47,6 +50,15 @@ const useStyles = makeStyles((theme: Theme) =>
 function KnowledgeFileCard({ knowledgeFile }: Props): ReactElement {
   const classes = useStyles();
   const queryCache = useQueryCache();
+
+  const querySettings = useSelector<StateType, GetKnowledgeFilesArgs>(
+    (state) =>
+      state.client.knowledgeFileList.querySettings as GetKnowledgeFilesArgs
+  );
+
+  const fields = useSelector<StateType, KnowledgeFileFields[]>((state) => {
+    return state.client.knowledgeFileList.fields as KnowledgeFileFields[];
+  });
 
   const [putKNowledgeFile] = usePutKnowledgeFile(undefined, [
     KnowledgeFileFields.id,
@@ -72,9 +84,23 @@ function KnowledgeFileCard({ knowledgeFile }: Props): ReactElement {
 
     deleteKnowledgeFile({
       id: knowledgeFile.id,
-      idToken: '',
-    }).then(() => {
-      queryCache.invalidateQueries(NKnowledgeFile);
+      idToken: querySettings.idToken,
+    }).then((deletedKnowledgeFile) => {
+      if (deletedKnowledgeFile === undefined) {
+        throw new Error('deletedKnowledgeFile === undefined');
+      }
+
+      queryCache.setQueryData<KnowledgeFile[]>(
+        [NKnowledgeFile, querySettings, fields],
+        (knowledgeFiles) => {
+          if (knowledgeFiles === undefined) {
+            throw new Error('knowledgeFiles === undefined');
+          }
+          return knowledgeFiles.filter(
+            (knowledgeFile) => knowledgeFile.id !== deletedKnowledgeFile.id
+          );
+        }
+      );
     });
   };
 
@@ -99,7 +125,7 @@ function KnowledgeFileCard({ knowledgeFile }: Props): ReactElement {
               putKNowledgeFile({
                 id: knowledgeFile.id,
                 srcText: editedSrcText,
-                idToken: '',
+                idToken: querySettings.idToken,
               });
               duringEditingTimeoutlId = undefined;
             }, duringEditingTimeoutDuration);
@@ -115,7 +141,7 @@ function KnowledgeFileCard({ knowledgeFile }: Props): ReactElement {
             putKNowledgeFile({
               id: knowledgeFile.id,
               srcText: editedSrcText,
-              idToken: '',
+              idToken: querySettings.idToken,
             });
 
             if (duringEditingTimeoutlId !== undefined) {

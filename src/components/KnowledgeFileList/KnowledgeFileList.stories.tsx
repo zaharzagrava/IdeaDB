@@ -13,7 +13,11 @@ worker.use(
     (req, res, ctx) => {
       return res(
         ctx.data({
-          getKnowledgeFiles: [knowledgeFiles[0], knowledgeFiles[1]],
+          getKnowledgeFiles: [
+            knowledgeFiles[0],
+            knowledgeFiles[1],
+            knowledgeFiles[2],
+          ],
         })
       );
     }

@@ -63,6 +63,9 @@ export function useGetKnowledgeFiles(
       }
 
       return response.data.getKnowledgeFiles;
+    },
+    {
+      refetchOnWindowFocus: false,
     }
   );
 }

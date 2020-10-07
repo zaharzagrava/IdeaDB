@@ -47,9 +47,11 @@ export const reqWrapper: MiddlewareFn<Context> = async (
 
     // Get clientId from idToken
     let uid = null;
-    if (args.idToken === undefined || args.idToken === '') {
-      context.clientId = 1;
+    if (args.idToken === undefined) {
+      throw new Error('No idToken is provided');
     } else {
+      console.log('@idToken: ' + args.idToken);
+
       let decodedIdToken: admin.auth.DecodedIdToken = await admin
         .auth()
         .verifyIdToken(args.idToken);
@@ -63,8 +65,19 @@ export const reqWrapper: MiddlewareFn<Context> = async (
         .select()
         .where('uid', uid);
 
+      if (data.length === 0) {
+        console.log('@data.length === 0');
+        const fields = {
+          full_name: 'New User',
+          uid: uid,
+        };
+
+        // Register new user
+        data = await context.knexConnection('client').insert(fields, ['id']);
+      }
+
       console.log('@clientData');
-      console.log(data[0]);
+      console.log(data);
 
       context.clientId = data[0].id;
     }

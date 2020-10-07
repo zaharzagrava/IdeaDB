@@ -4,10 +4,16 @@ import SearchBar from '../SearchBar/SearchBar';
 import KnowledgeFileList from '../KnowledgeFileList/KnowledgeFileList';
 import { createStyles, Fab, makeStyles, Theme } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
-import { KnowledgeFileFields } from '../../types/types';
+import {
+  GetKnowledgeFilesArgs,
+  KnowledgeFile,
+  KnowledgeFileFields,
+  NKnowledgeFile,
+  StateType,
+} from '../../types/types';
 import { AuthActionCreators } from '../../redux/client';
 import { usePostKnowledgeFile } from '../../backendapi/graphql';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useQueryCache } from 'react-query';
 
 // interface Props {}
@@ -27,14 +33,33 @@ function KnowledgeFilesPage(): ReactElement {
   const dispatch = useDispatch();
   const queryCache = useQueryCache();
 
-  const [postKnowledgeFile] = usePostKnowledgeFile(() => {
-    dispatch(AuthActionCreators.regexListUpdated(['New File']));
-    queryCache.invalidateQueries('knowledge_file');
-  }, [
-    KnowledgeFileFields.id,
-    KnowledgeFileFields.srcText,
-    KnowledgeFileFields.lastDateTimeModified,
-  ]);
+  const querySettings = useSelector<StateType, GetKnowledgeFilesArgs>(
+    (state) =>
+      state.client.knowledgeFileList.querySettings as GetKnowledgeFilesArgs
+  );
+
+  const fields = useSelector<StateType, KnowledgeFileFields[]>((state) => {
+    return state.client.knowledgeFileList.fields as KnowledgeFileFields[];
+  });
+
+  const [postKnowledgeFile] = usePostKnowledgeFile(
+    (knowledgeFile) => {
+      queryCache.setQueryData<KnowledgeFile[]>(
+        [NKnowledgeFile, querySettings, fields],
+        (knowledgeFiles) => {
+          if (knowledgeFiles === undefined) {
+            throw new Error('knowledgeFiles === undefined');
+          }
+          return knowledgeFiles.concat(knowledgeFile);
+        }
+      );
+    },
+    [
+      KnowledgeFileFields.id,
+      KnowledgeFileFields.srcText,
+      KnowledgeFileFields.lastDateTimeModified,
+    ]
+  );
 
   const onCreateKnowledgeFile = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -43,7 +68,7 @@ function KnowledgeFilesPage(): ReactElement {
 
     postKnowledgeFile({
       srcText: 'New File',
-      idToken: '',
+      idToken: querySettings.idToken,
     });
   };
 

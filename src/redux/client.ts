@@ -7,17 +7,21 @@ import {
 } from '../types/types';
 
 // Action Types
-export const LOGGED_IN = 'LOGGED_IN';
+export const LOGIN_STATUS_UPDATED = 'LOGGED_IN_STATUS_UPDATED';
 export const LOGGED_OUT = 'LOGGED_OUT';
 export const REGEX_LIST_UPDATED = 'REGEX_LIST_UPDATED';
+export const ID_TOKEN_UPDATED = 'ID_TOKEN_UPDATED';
 
 // Actions Interfaces
-interface LoggedIn {
-  type: typeof LOGGED_IN;
+export enum LoginStatus {
+  LOGGED_OUT,
+  LOGGED_IN,
+  PRELOAD,
 }
 
-interface LoggedOut {
-  type: typeof LOGGED_OUT;
+interface LoginStatusUpdated {
+  type: typeof LOGIN_STATUS_UPDATED;
+  payload: LoginStatus;
 }
 
 interface RegexListUpdated {
@@ -25,10 +29,15 @@ interface RegexListUpdated {
   payload: string[];
 }
 
-export type AuthAction = LoggedIn | LoggedOut | RegexListUpdated;
+interface IdTokenUpdated {
+  type: typeof ID_TOKEN_UPDATED;
+  payload: string;
+}
+
+export type AuthAction = LoginStatusUpdated | RegexListUpdated | IdTokenUpdated;
 
 export interface Auth {
-  loginStatus: boolean;
+  loginStatus: LoginStatus;
   knowledgeFileList: {
     querySettings: GetKnowledgeFilesArgs;
     fields: KnowledgeFileFields[];
@@ -36,7 +45,7 @@ export interface Auth {
 }
 
 const initialState: Auth = {
-  loginStatus: false,
+  loginStatus: LoginStatus.PRELOAD,
   knowledgeFileList: {
     querySettings: {
       regexList: [''],
@@ -60,16 +69,16 @@ const initialState: Auth = {
 
 export default produce((draft: Auth, action: AuthAction) => {
   switch (action.type) {
-    case LOGGED_IN:
-      draft.loginStatus = true;
+    case LOGIN_STATUS_UPDATED:
+      draft.loginStatus = action.payload;
       return;
-
-    case LOGGED_OUT:
-      draft.loginStatus = false;
-      return;
-
     case REGEX_LIST_UPDATED:
       draft.knowledgeFileList.querySettings.regexList = action.payload;
+      return;
+
+    case ID_TOKEN_UPDATED:
+      draft.knowledgeFileList.querySettings.idToken = action.payload;
+      return;
 
     default:
       return;
@@ -77,20 +86,24 @@ export default produce((draft: Auth, action: AuthAction) => {
 }, initialState);
 
 export const AuthActionCreators = {
-  loggedIn: function (): AuthAction {
+  loginStatusUpdated: function (
+    loginInStatus: LoginStatus
+  ): LoginStatusUpdated {
     return {
-      type: LOGGED_IN,
-    };
-  },
-  loggedOut: function (): AuthAction {
-    return {
-      type: LOGGED_OUT,
+      type: LOGIN_STATUS_UPDATED,
+      payload: loginInStatus,
     };
   },
   regexListUpdated: function (regexList: string[]): RegexListUpdated {
     return {
       type: REGEX_LIST_UPDATED,
       payload: regexList,
+    };
+  },
+  idTokenUpdated: function (idToken: string): IdTokenUpdated {
+    return {
+      type: ID_TOKEN_UPDATED,
+      payload: idToken,
     };
   },
 };
